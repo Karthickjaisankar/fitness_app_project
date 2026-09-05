@@ -816,10 +816,17 @@
   transition: all var(--transition-fast);
 }
 
-.map-event-item:hover, .map-event-item.selected {
+.map-event-item:hover {
   background: rgba(255, 255, 255, 0.07);
   border-color: var(--accent-neon);
   transform: translateX(4px);
+}
+
+.map-event-item.selected {
+  background: rgba(0, 245, 155, 0.12) !important;
+  border-color: var(--accent-neon) !important;
+  box-shadow: 0 0 20px rgba(0, 245, 155, 0.25), inset 0 0 10px rgba(0, 245, 155, 0.1) !important;
+  transform: translateX(6px) !important;
 }
 
 /* Custom Pulsing Neon Marker */
@@ -851,11 +858,35 @@
   justify-content: center;
   box-shadow: 0 0 12px currentColor;
   z-index: 2;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Active Selected Marker Spotlight */
+.custom-map-marker.active-selected {
+  z-index: 1000 !important;
+}
+
+.custom-map-marker.active-selected .pin-core {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+  box-shadow: 0 0 25px currentColor, 0 0 50px currentColor;
+  transform: scale(1.35);
+}
+
+.custom-map-marker.active-selected .pin-pulse {
+  animation: activePinPulseAnimation 1.2s infinite ease-out;
 }
 
 @keyframes pinPulseAnimation {
   0% { transform: scale(0.6); opacity: 0.9; }
   100% { transform: scale(2.4); opacity: 0; }
+}
+
+@keyframes activePinPulseAnimation {
+  0% { transform: scale(0.6); opacity: 1; }
+  50% { transform: scale(2.2); opacity: 0.8; }
+  100% { transform: scale(3.5); opacity: 0; }
 }
 
 /* Leaflet Dark Custom Popup */

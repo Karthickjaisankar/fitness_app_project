@@ -5,9 +5,11 @@ class EventRadarMap {
   constructor() {
     this.map = null;
     this.markersLayer = null;
+    this.markersMap = new Map(); // eventId -> { marker, lat, lng, evt }
     this.events = [];
     this.selectedCity = 'All';
     this.selectedCategory = 'All';
+    this.selectedEventId = null;
 
     // Priority Hub Centroids
     this.hubCoordinates = {
@@ -47,6 +49,9 @@ class EventRadarMap {
 
     // 4. Load Live Events
     await this.loadAndPlotEvents();
+
+    // Expose instance globally for cross-tab event selection
+    window.eventRadarMap = this;
   }
 
   async loadAndPlotEvents() {
@@ -66,6 +71,7 @@ class EventRadarMap {
     const L = window.L;
 
     this.markersLayer.clearLayers();
+    this.markersMap.clear();
 
     // Filter events
     const filtered = this.events.filter((evt) => {
@@ -90,12 +96,13 @@ class EventRadarMap {
     filtered.forEach((evt) => {
       const lat = evt.coordinates?.lat || 12.9716;
       const lng = evt.coordinates?.lng || 77.5946;
+      const isSelected = String(evt.id) === String(this.selectedEventId);
 
       const markerColor = this.getDisciplineColor(evt);
       const customIcon = L.divIcon({
-        className: 'custom-map-marker',
+        className: `custom-map-marker ${isSelected ? 'active-selected' : ''}`,
         html: `
-          <div class="neon-pin-icon">
+          <div class="neon-pin-icon" data-pin-id="${evt.id}">
             <div class="pin-pulse" style="background: ${markerColor};"></div>
             <div class="pin-core" style="background: ${markerColor}; color: ${markerColor};"></div>
           </div>
@@ -133,7 +140,14 @@ class EventRadarMap {
       `;
 
       const marker = L.marker([lat, lng], { icon: customIcon }).bindPopup(popupHtml);
+      
+      // When marker is clicked, synchronize selection and highlight in sidebar
+      marker.on('click', () => {
+        this.selectEvent(evt.id, { fly: false, openPopup: true });
+      });
+
       this.markersLayer.addLayer(marker);
+      this.markersMap.set(String(evt.id), { marker, lat, lng, evt });
     });
 
     // Delegate register clicks inside popup
@@ -151,6 +165,14 @@ class EventRadarMap {
 
     // Render Sidebar List
     this.renderSidebarList(filtered);
+
+    // If an event was selected before re-render, re-open its popup
+    if (this.selectedEventId && this.markersMap.has(String(this.selectedEventId))) {
+      const { marker } = this.markersMap.get(String(this.selectedEventId));
+      setTimeout(() => {
+        marker.openPopup();
+      }, 200);
+    }
   }
 
   renderSidebarList(filtered) {
@@ -179,8 +201,9 @@ class EventRadarMap {
     listEl.innerHTML = filtered
       .map((evt) => {
         const markerColor = this.getDisciplineColor(evt);
+        const isSelected = String(evt.id) === String(this.selectedEventId);
         return `
-          <div class="map-event-item" data-id="${evt.id}" data-lat="${evt.coordinates?.lat}" data-lng="${evt.coordinates?.lng}">
+          <div class="map-event-item ${isSelected ? 'selected' : ''}" data-id="${evt.id}" data-lat="${evt.coordinates?.lat}" data-lng="${evt.coordinates?.lng}">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <span style="font-size:0.75rem; font-weight:700; color:${markerColor}; display:flex; align-items:center; gap:4px;">
                 ● ${evt.city}
@@ -201,18 +224,72 @@ class EventRadarMap {
       })
       .join('');
 
-    // Attach click-to-fly
+    // Attach click-to-select on sidebar items
     listEl.querySelectorAll('.map-event-item').forEach((item) => {
       item.addEventListener('click', () => {
-        const lat = parseFloat(item.getAttribute('data-lat') || '12.9716');
-        const lng = parseFloat(item.getAttribute('data-lng') || '77.5946');
-        this.map.flyTo([lat, lng], 14, { duration: 1.2 });
-
-        // Highlight selected
-        listEl.querySelectorAll('.map-event-item').forEach((el) => el.classList.remove('selected'));
-        item.classList.add('selected');
+        const id = item.getAttribute('data-id');
+        this.selectEvent(id, { fly: true, openPopup: true });
       });
     });
+  }
+
+  selectEvent(eventId, { fly = true, openPopup = true } = {}) {
+    if (!eventId) return;
+    this.selectedEventId = String(eventId);
+
+    const evt = this.events.find((e) => String(e.id) === String(eventId));
+    if (!evt) return;
+
+    // If currently filtered by another city, reset city to 'All' so marker is visible
+    if (this.selectedCity !== 'All' && (evt.city || '').toLowerCase() !== this.selectedCity.toLowerCase()) {
+      this.selectedCity = 'All';
+      document.querySelectorAll('.map-hub-btn').forEach((b) => {
+        b.classList.toggle('active', b.getAttribute('data-hub') === 'All');
+      });
+      this.renderMarkersAndSidebar();
+    }
+
+    // 1. Highlight selected item in sidebar list and scroll to it
+    const listEl = document.getElementById('map-events-list');
+    if (listEl) {
+      listEl.querySelectorAll('.map-event-item').forEach((el) => {
+        const isMatch = el.getAttribute('data-id') === String(eventId);
+        el.classList.toggle('selected', isMatch);
+        if (isMatch) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    }
+
+    // 2. Spotlight the Leaflet marker
+    const markerData = this.markersMap.get(String(eventId));
+    if (markerData && this.map) {
+      const { marker, lat, lng } = markerData;
+
+      // Reset active-selected on all markers
+      this.markersMap.forEach(({ marker: m }) => {
+        const iconEl = m.getElement();
+        if (iconEl) iconEl.classList.remove('active-selected');
+      });
+
+      // Add active-selected to this marker
+      const iconEl = marker.getElement();
+      if (iconEl) {
+        iconEl.classList.add('active-selected');
+      }
+
+      // Fly to marker
+      if (fly) {
+        this.map.flyTo([lat, lng], 15, { duration: 1.2 });
+      }
+
+      // Open popup
+      if (openPopup) {
+        setTimeout(() => {
+          marker.openPopup();
+        }, fly ? 350 : 50);
+      }
+    }
   }
 
   setupHubButtons() {
@@ -227,6 +304,7 @@ class EventRadarMap {
 
   flyToHub(hub) {
     this.selectedCity = hub;
+    this.selectedEventId = null; // Clear individual selection on hub switch
     const config = this.hubCoordinates[hub] || this.hubCoordinates['All'];
 
     document.querySelectorAll('.map-hub-btn').forEach((b) => {
@@ -267,7 +345,7 @@ class EventRadarMap {
     if (this.map) {
       setTimeout(() => {
         this.map.invalidateSize();
-      }, 200);
+      }, 150);
     }
   }
 }

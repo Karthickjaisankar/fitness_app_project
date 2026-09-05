@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupRegistrationModal();
   setupSosBeacon();
 
-  (window as any).openRegistrationModal = openRegistrationModal;
+  window.openRegistrationModal = openRegistrationModal;
 
   await loadAllData();
   await eventRadarMap.init();
@@ -176,9 +176,15 @@ function renderEvents() {
                 <span>From</span>
                 <div class="event-price-amount">₹${evt.priceFromInr.toLocaleString()}</div>
               </div>
-              <button class="btn btn-primary register-btn" data-event-id="${evt.id}">
-                Register & Save PTS
-              </button>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary view-radar-btn" data-event-id="${evt.id}" title="View and focus on Event Radar Map" style="font-size: 0.8rem; padding: 6px 12px; border-color: rgba(0, 245, 155, 0.4); color: var(--accent-neon); display: flex; align-items: center; gap: 4px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                  Map
+                </button>
+                <button class="btn btn-primary register-btn" data-event-id="${evt.id}">
+                  Register & Save
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -188,9 +194,27 @@ function renderEvents() {
 
   // Attach event click listeners
   container.querySelectorAll('.register-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const id = btn.getAttribute('data-event-id');
       openRegistrationModal(id);
+    });
+  });
+
+  // Attach View on Map click listeners
+  container.querySelectorAll('.view-radar-btn, .event-location').forEach((el) => {
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = el.getAttribute('data-event-id') || el.closest('.event-card')?.querySelector('.view-radar-btn')?.getAttribute('data-event-id');
+      if (id) {
+        switchTab('map');
+        setTimeout(() => {
+          if (window.eventRadarMap) {
+            window.eventRadarMap.selectEvent(id, { fly: true, openPopup: true });
+          }
+        }, 150);
+      }
     });
   });
 }
@@ -497,11 +521,14 @@ async function runSimulation(params) {
 // ----------------------------------------------------
 
 function setupNavigation() {
+  window.switchTab = switchTab;
   const tabs = document.querySelectorAll('.nav-tab-btn');
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
       const target = tab.getAttribute('data-tab');
-      switchTab(target);
+      if (target) {
+        switchTab(target);
+      }
     });
   });
 }
