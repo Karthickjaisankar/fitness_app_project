@@ -19,6 +19,13 @@ apiRouter.get('/health', (req: Request, res: Response) => {
   });
 });
 
+// Client configuration endpoint (Google Maps API key)
+apiRouter.get('/config', (req: Request, res: Response) => {
+  res.json({
+    gmapApiKey: process.env.GMAP_API || process.env.GOOGLE_MAPS_API_KEY || ''
+  });
+});
+
 // ==========================================
 // 1. User & Ledger
 // ==========================================

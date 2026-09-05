@@ -35,11 +35,8 @@ class EventRadarMap {
     // Zoom control in bottom right
     L.control.zoom({ position: 'bottomright' }).addTo(this.map);
 
-    // 2. High-Tech Dark Athletic Basemap Tiles (CartoDB Dark Matter)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19,
-      subdomains: 'abcd'
-    }).addTo(this.map);
+    // 2. High-Tech Multi-Layer Basemap (Zero Watermarks: Esri Dark Canvas, Google Satellite, Google Streets)
+    this.initBaseLayers();
 
     this.markersLayer = L.layerGroup().addTo(this.map);
 
@@ -290,6 +287,77 @@ class EventRadarMap {
         }, fly ? 350 : 50);
       }
     }
+  }
+
+  initBaseLayers() {
+    const L = window.L;
+    if (!L || !this.map) return;
+
+    // Layer 1: Esri Dark Canvas (Clean athletic dark, 100% free, zero watermark)
+    const esriBase = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+      { maxZoom: 16, attribution: 'Esri, HERE, Garmin' }
+    );
+    const esriRef = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+      { maxZoom: 16 }
+    );
+    const darkCanvas = L.layerGroup([esriBase, esriRef]);
+
+    // Layer 2: Google Satellite Hybrid (Ultra-high-res crisp satellite imagery)
+    const googleSatellite = L.tileLayer(
+      'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+      { maxZoom: 20, attribution: 'Google' }
+    );
+
+    // Layer 3: Google Streets Roadmap
+    const googleRoadmap = L.tileLayer(
+      'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+      { maxZoom: 20, attribution: 'Google' }
+    );
+
+    this.baseLayers = {
+      'dark': darkCanvas,
+      'google-satellite': googleSatellite,
+      'google-roadmap': googleRoadmap
+    };
+
+    // Default to clean dark canvas
+    darkCanvas.addTo(this.map);
+    this.currentBaseLayer = darkCanvas;
+
+    // Attach listeners for layer switcher buttons
+    document.querySelectorAll('.map-layer-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const layerKey = btn.getAttribute('data-layer');
+        if (layerKey) this.switchBaseLayer(layerKey);
+      });
+    });
+  }
+
+  switchBaseLayer(layerKey) {
+    if (!this.baseLayers || !this.baseLayers[layerKey] || !this.map) return;
+
+    if (this.currentBaseLayer) {
+      this.map.removeLayer(this.currentBaseLayer);
+    }
+
+    this.baseLayers[layerKey].addTo(this.map);
+    this.currentBaseLayer = this.baseLayers[layerKey];
+
+    // Ensure pins layer remains top-most
+    if (this.markersLayer) {
+      this.markersLayer.bringToFront();
+    }
+
+    // Update button states
+    document.querySelectorAll('.map-layer-btn').forEach((b) => {
+      const isActive = b.getAttribute('data-layer') === layerKey;
+      b.classList.toggle('active', isActive);
+      b.style.color = isActive ? '#fff' : '#9ca3af';
+      b.style.background = isActive ? 'rgba(0, 245, 155, 0.2)' : 'none';
+      b.style.borderColor = isActive ? 'var(--accent-neon)' : 'transparent';
+    });
   }
 
   setupHubButtons() {

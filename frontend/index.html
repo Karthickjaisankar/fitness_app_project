@@ -152,6 +152,13 @@
               <button class="map-hub-btn" data-hub="Coimbatore">📍 Coimbatore (5)</button>
             </div>
             
+            <!-- Basemap Layer Switcher (Zero Watermark) -->
+            <div class="map-layer-pills" style="display: flex; gap: 4px; background: rgba(0,0,0,0.6); padding: 4px 6px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12);">
+              <button class="map-layer-btn active" data-layer="dark" style="background: rgba(0, 245, 155, 0.2); border: 1px solid var(--accent-neon); color: #fff; font-size: 0.72rem; padding: 4px 10px; border-radius: 12px; cursor: pointer; font-weight: 600;">🌑 Dark</button>
+              <button class="map-layer-btn" data-layer="google-satellite" style="background: none; border: 1px solid transparent; color: #9ca3af; font-size: 0.72rem; padding: 4px 10px; border-radius: 12px; cursor: pointer; font-weight: 600;">🛰️ Satellite</button>
+              <button class="map-layer-btn" data-layer="google-roadmap" style="background: none; border: 1px solid transparent; color: #9ca3af; font-size: 0.72rem; padding: 4px 10px; border-radius: 12px; cursor: pointer; font-weight: 600;">🗺️ Streets</button>
+            </div>
+
             <div class="glass-pill badge-neon" style="font-size: 0.75rem;">
               <span class="animate-pulse-glow" style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent-neon); display: inline-block;"></span>
               Live Geocoded Coordinates

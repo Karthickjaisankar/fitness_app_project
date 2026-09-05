@@ -8,6 +8,16 @@ export const api = {
     return res.json();
   },
 
+  // Client Config (Google Maps API Key)
+  async getConfig() {
+    try {
+      const res = await fetch(`${API_BASE}/config`);
+      return res.json();
+    } catch (e) {
+      return { gmapApiKey: '' };
+    }
+  },
+
   // Ledger Transactions
   async getLedger() {
     const res = await fetch(`${API_BASE}/ledger`);
