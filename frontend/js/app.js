@@ -217,6 +217,22 @@ function renderEvents() {
       }
     });
   });
+
+  // Make entire event card clickable to navigate directly to its venue on map
+  container.querySelectorAll('.event-card').forEach((card) => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.register-btn') || e.target.closest('.view-radar-btn')) return;
+      const id = card.querySelector('.register-btn')?.getAttribute('data-event-id');
+      if (id) {
+        switchTab('map');
+        setTimeout(() => {
+          if (window.eventRadarMap) {
+            window.eventRadarMap.selectEvent(id, { fly: true, openPopup: true });
+          }
+        }, 150);
+      }
+    });
+  });
 }
 
 function renderLedger() {

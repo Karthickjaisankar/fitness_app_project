@@ -168,6 +168,25 @@
           <!-- Map Div -->
           <div id="event-radar-map"></div>
 
+          <!-- Selected Venue Spotlight HUD -->
+          <div id="map-venue-hud" class="map-venue-hud" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span class="glass-pill badge-neon" style="font-size: 0.68rem; padding: 2px 8px;">🎯 VENUE PINPOINT</span>
+              <button id="close-venue-hud" style="background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 1.1rem; line-height: 1;">&times;</button>
+            </div>
+            <h4 id="hud-venue-title" style="margin: 0 0 4px; font-size: 0.95rem; color: #fff; font-family: var(--font-family-display);">Venue Name</h4>
+            <div id="hud-venue-name" style="font-size: 0.8rem; color: #38bdf8; margin-bottom: 8px; font-weight: 600;">📍 Venue location</div>
+            <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px;">
+              <span id="hud-venue-coords" style="font-family: var(--font-family-mono); font-size: 0.72rem; color: var(--accent-gold);">13.0000° N, 80.0000° E</span>
+              <div style="display: flex; gap: 6px;">
+                <button id="hud-zoom-btn" class="btn btn-secondary" style="font-size: 0.72rem; padding: 3px 8px;">🔍 Zoom In</button>
+                <a id="hud-gmap-link" href="#" target="_blank" class="btn btn-primary" style="font-size: 0.72rem; padding: 3px 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                  Google Maps ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
           <!-- Map Legend -->
           <div class="map-legend">
             <div class="legend-item"><span class="legend-dot" style="background: #00f59b;"></span> 5K / 10K</div>

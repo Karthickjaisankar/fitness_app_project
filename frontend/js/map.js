@@ -118,8 +118,14 @@ class EventRadarMap {
               <span style="font-size:0.8rem; font-weight:700; color:var(--accent-gold);">${evt.date}</span>
             </div>
             <h4 class="popup-card-title">${evt.title}</h4>
-            <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:12px;">
+            <div style="font-size:0.8rem; color:#38bdf8; margin-bottom:6px; font-weight:600;">
               📍 ${evt.venue}
+            </div>
+            <div style="margin-bottom:10px;">
+              <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank" class="btn btn-secondary" style="font-size:0.72rem; padding:3px 8px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; border-color:rgba(56,189,248,0.4); color:#38bdf8;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                Google Maps Directions ↗
+              </a>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
               <div>
@@ -275,9 +281,9 @@ class EventRadarMap {
         iconEl.classList.add('active-selected');
       }
 
-      // Fly to marker
+      // Fly to marker with neighborhood precision zoom 16
       if (fly) {
-        this.map.flyTo([lat, lng], 15, { duration: 1.2 });
+        this.map.flyTo([lat, lng], 16, { duration: 1.3 });
       }
 
       // Open popup
@@ -286,7 +292,41 @@ class EventRadarMap {
           marker.openPopup();
         }, fly ? 350 : 50);
       }
+
+      // Update Venue Spotlight HUD
+      this.updateVenueHud(evt, lat, lng);
     }
+  }
+
+  updateVenueHud(evt, lat, lng) {
+    const hud = document.getElementById('map-venue-hud');
+    if (!hud) return;
+
+    const titleEl = document.getElementById('hud-venue-title');
+    const nameEl = document.getElementById('hud-venue-name');
+    const coordsEl = document.getElementById('hud-venue-coords');
+    const gmapLink = document.getElementById('hud-gmap-link');
+    const zoomBtn = document.getElementById('hud-zoom-btn');
+    const closeBtn = document.getElementById('close-venue-hud');
+
+    if (titleEl) titleEl.textContent = evt.title;
+    if (nameEl) nameEl.textContent = `📍 ${evt.venue}`;
+    if (coordsEl) coordsEl.textContent = `${lat.toFixed(4)}° N, ${lng.toFixed(4)}° E`;
+    if (gmapLink) gmapLink.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+
+    if (zoomBtn) {
+      zoomBtn.onclick = () => {
+        if (this.map) this.map.flyTo([lat, lng], 18, { duration: 1 });
+      };
+    }
+
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        hud.style.display = 'none';
+      };
+    }
+
+    hud.style.display = 'block';
   }
 
   initBaseLayers() {
