@@ -2,8 +2,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { FitnessEvent, DistanceCategory } from '../models/types';
 import { store } from '../data/store';
 import { LedgerService } from './ledger';
-import sqlite3 from 'better-sqlite3';
 import path from 'path';
+import fs from 'fs';
 
 export interface EventFilterOptions {
   query?: string;
@@ -18,44 +18,64 @@ export interface EventFilterOptions {
 
 export class EventsService {
   /**
-   * Load real Gold records from SQLite Lakehouse
+   * Load real Gold records from SQLite Lakehouse, with seamless fallback to gold_events_seed.json
    */
   public static loadGoldEvents(): FitnessEvent[] {
+    // 1. Try SQLite Lakehouse DB if present
     try {
       const dbPath = path.resolve(__dirname, '../../data/pipeline_lakehouse.db');
-      const db = new sqlite3(dbPath, { readonly: true });
-      const rows = db.prepare('SELECT * FROM lakehouse_gold ORDER BY event_date ASC').all() as any[];
-      db.close();
+      if (fs.existsSync(dbPath)) {
+        const sqlite3 = require('better-sqlite3');
+        const db = new sqlite3(dbPath, { readonly: true });
+        const rows = db.prepare('SELECT * FROM lakehouse_gold ORDER BY event_date ASC').all() as any[];
+        db.close();
 
-      if (rows && rows.length > 0) {
-        return rows.map((r) => {
-          const bookingLinks = JSON.parse(r.booking_links_json || '[]');
-          const primaryLink = bookingLinks[0]?.url || 'https://www.townscript.com';
-          return {
-            id: r.canonical_id,
-            title: r.canonical_title,
-            slug: r.canonical_slug,
-            organizer: 'Townscript Verified Partner',
-            date: r.event_date,
-            time: '05:30 AM IST',
-            city: r.city,
-            state: 'Karnataka',
-            venue: r.venue,
-            distanceCategories: JSON.parse(r.categories_json || '[]'),
-            tags: JSON.parse(r.tags_json || '[]'),
-            priceFromInr: r.price_from_inr,
-            registrationUrl: primaryLink,
-            source: r.primary_source || 'Townscript',
-            verified: Boolean(r.verified),
-            bannerUrl: r.banner_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=800&auto=format&fit=crop&q=80',
-            coordinates: { lat: r.lat || 12.9716, lng: r.lng || 77.5946 }
-          };
-        });
+        if (rows && rows.length > 0) {
+          return rows.map((r) => {
+            const bookingLinks = JSON.parse(r.booking_links_json || '[]');
+            const primaryLink = bookingLinks[0]?.url || 'https://www.townscript.com';
+            return {
+              id: r.canonical_id,
+              title: r.canonical_title,
+              slug: r.canonical_slug,
+              organizer: 'Townscript Verified Partner',
+              date: r.event_date,
+              time: '05:30 AM IST',
+              city: r.city,
+              state: 'Karnataka',
+              venue: r.venue,
+              distanceCategories: JSON.parse(r.categories_json || '[]'),
+              tags: JSON.parse(r.tags_json || '[]'),
+              priceFromInr: r.price_from_inr,
+              registrationUrl: primaryLink,
+              source: r.primary_source || 'Townscript',
+              verified: Boolean(r.verified),
+              bannerUrl: r.banner_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=800&auto=format&fit=crop&q=80',
+              coordinates: { lat: r.lat || 12.9716, lng: r.lng || 77.5946 }
+            };
+          });
+        }
       }
-    } catch (err) {
-      console.warn('[EventsService] Falling back to store.events:', err);
+    } catch (err: any) {
+      console.warn('[EventsService] SQLite load bypassed, checking JSON seed:', err?.message || err);
     }
-    return store.events;
+
+    // 2. Try gold_events_seed.json (48 real events across Chennai, Bengaluru, Coimbatore)
+    try {
+      const seedPath = path.resolve(__dirname, '../../data/gold_events_seed.json');
+      if (fs.existsSync(seedPath)) {
+        const raw = fs.readFileSync(seedPath, 'utf-8');
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (seedErr: any) {
+      console.warn('[EventsService] Seed JSON load error:', seedErr?.message || seedErr);
+    }
+
+    // 3. Fallback to in-memory store
+    return store.events || [];
   }
 
   /**

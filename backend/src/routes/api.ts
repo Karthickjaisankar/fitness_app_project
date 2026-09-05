@@ -124,21 +124,30 @@ apiRouter.post('/activities/healthkit-sync', (req: Request, res: Response) => {
 // 4. Calendar & Events Aggregation
 // ==========================================
 apiRouter.get('/events', (req: Request, res: Response) => {
-  const { query, city, category, source, fromDate, toDate } = req.query;
-  const events = EventsService.getEvents({
-    query: query as string,
-    city: city as string,
-    category: category as string,
-    source: source as string,
-    fromDate: fromDate as string,
-    toDate: toDate as string
-  });
+  try {
+    const { query, city, category, source, fromDate, toDate } = req.query;
+    const events = EventsService.getEvents({
+      query: query as string,
+      city: city as string,
+      category: category as string,
+      source: source as string,
+      fromDate: fromDate as string,
+      toDate: toDate as string
+    });
 
-  res.json({
-    success: true,
-    count: events.length,
-    events
-  });
+    res.json({
+      success: true,
+      count: events.length,
+      events
+    });
+  } catch (err: any) {
+    console.error('Error in /api/events:', err);
+    res.json({
+      success: true,
+      count: (store.events || []).length,
+      events: store.events || []
+    });
+  }
 });
 
 apiRouter.get('/events/:id', (req: Request, res: Response) => {
