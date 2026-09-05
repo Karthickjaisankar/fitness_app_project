@@ -364,6 +364,23 @@ class DataStore {
       badge: 'Silver Verified Chapter'
     }
   ];
+
+  constructor() {
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const seedPath = path.resolve(__dirname, '../../data/gold_events_seed.json');
+      if (fs.existsSync(seedPath)) {
+        const raw = fs.readFileSync(seedPath, 'utf-8');
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          this.events = parsed;
+        }
+      }
+    } catch (err) {
+      // Fallback remains initial events
+    }
+  }
 }
 
 export const store = new DataStore();

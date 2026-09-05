@@ -21,7 +21,21 @@ export class EventsService {
    * Load real Gold records from SQLite Lakehouse, with seamless fallback to gold_events_seed.json
    */
   public static loadGoldEvents(): FitnessEvent[] {
-    // 1. Try SQLite Lakehouse DB if present
+    // 1. Try gold_events_seed.json (pure JSON, instant, zero native SIGSEGV risk in containers)
+    try {
+      const seedPath = path.resolve(__dirname, '../../data/gold_events_seed.json');
+      if (fs.existsSync(seedPath)) {
+        const raw = fs.readFileSync(seedPath, 'utf-8');
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (seedErr: any) {
+      console.warn('[EventsService] Seed JSON load error:', seedErr?.message || seedErr);
+    }
+
+    // 2. Try SQLite Lakehouse DB if present
     try {
       const dbPath = path.resolve(__dirname, '../../data/pipeline_lakehouse.db');
       if (fs.existsSync(dbPath)) {
@@ -57,21 +71,7 @@ export class EventsService {
         }
       }
     } catch (err: any) {
-      console.warn('[EventsService] SQLite load bypassed, checking JSON seed:', err?.message || err);
-    }
-
-    // 2. Try gold_events_seed.json (48 real events across Chennai, Bengaluru, Coimbatore)
-    try {
-      const seedPath = path.resolve(__dirname, '../../data/gold_events_seed.json');
-      if (fs.existsSync(seedPath)) {
-        const raw = fs.readFileSync(seedPath, 'utf-8');
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-    } catch (seedErr: any) {
-      console.warn('[EventsService] Seed JSON load error:', seedErr?.message || seedErr);
+      console.warn('[EventsService] SQLite load bypassed:', err?.message || err);
     }
 
     // 3. Fallback to in-memory store
