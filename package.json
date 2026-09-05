@@ -8,5 +8,8 @@
     "build": "npm --prefix backend run build",
     "start": "npm --prefix backend run start",
     "dev": "npm --prefix backend run dev"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
