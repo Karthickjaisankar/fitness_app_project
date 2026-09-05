@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseFit — Architecture & Technical Design Deck</title>
+  
+  <!-- Modern Athletic Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <style>
+    :root {
+      --deck-bg: #090d16;
+      --slide-card-bg: rgba(17, 24, 39, 0.85);
+      --border-glow: rgba(0, 245, 155, 0.2);
+    }
+
+    body {
+      background: var(--deck-bg);
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Deck Header */
+    .deck-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(9, 13, 22, 0.95);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .brand-link svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--accent-neon);
+    }
+
+    .deck-nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slide-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .deck-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .deck-btn:hover {
+      background: rgba(0, 245, 155, 0.15);
+      border-color: var(--accent-neon);
+      color: var(--accent-neon);
+    }
+
+    .deck-btn.primary {
+      background: var(--accent-neon);
+      color: #000;
+      border-color: var(--accent-neon);
+    }
+    .deck-btn.primary:hover {
+      box-shadow: 0 0 15px rgba(0, 245, 155, 0.4);
+    }
+
+    /* Slide Container */
+    .slide-viewport {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-stage {
+      flex: 1;
+      position: relative;
+      min-height: 600px;
+    }
+
+    .slide-card {
+      display: none;
+      background: var(--slide-card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(16px);
+      animation: fadeInSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide-card.active {
+      display: block;
+    }
+
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(12px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .slide-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: rgba(0, 245, 155, 0.1);
+      color: var(--accent-neon);
+      border: 1px solid rgba(0, 245, 155, 0.3);
+      margin-bottom: 12px;
+    }
+
+    .slide-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin: 0 0 16px;
+      background: linear-gradient(135deg, #ffffff 40%, #9ca3af 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-desc {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #9ca3af;
+      margin-bottom: 32px;
+      max-width: 900px;
+    }
+
+    /* Diagram Nodes Grid */
+    .arch-diagram-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin: 24px 0 32px;
+    }
+
+    .arch-node {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 24px;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .arch-node::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--node-accent, var(--accent-neon));
+    }
+
+    .arch-node:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--node-accent, var(--accent-neon));
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .arch-node-icon {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+    }
+
+    .arch-node h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      margin: 0 0 8px;
+      color: white;
+    }
+
+    .arch-node p {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .badge-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #38bdf8;
+      display: inline-block;
+      margin-top: 8px;
+    }
+
+    /* Comparison & Flow Tables */
+    .arch-flow-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 0.9rem;
+    }
+
+    .arch-flow-table th {
+      text-align: left;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      font-family: 'Outfit', sans-serif;
+      color: white;
+    }
+
+    .arch-flow-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #d1d5db;
+    }
+
+    .arch-flow-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Thumbnail Ribbon */
+    .deck-thumbnails {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .thumb-btn {
+      flex: 1;
+      min-width: 140px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: left;
+      cursor: pointer;
+      color: #9ca3af;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+
+    .thumb-btn.active {
+      background: rgba(0, 245, 155, 0.08);
+      border-color: var(--accent-neon);
+      color: white;
+    }
+
+    .thumb-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent-neon);
+      display: block;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation & Controls -->
+  <header class="deck-topbar">
+    <a href="/" class="brand-link">
+      <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <div>
+        <div style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.3px;">PulseFit Architecture Deck</div>
+        <div style="font-size: 0.72rem; color: #9ca3af;">Technical System Design & Cloud Blueprint</div>
+      </div>
+    </a>
+
+    <div class="deck-nav-controls">
+      <span class="slide-counter" id="slide-counter">Slide 1 of 6</span>
+      <button class="deck-btn" id="prev-slide-btn" onclick="prevSlide()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        Prev
+      </button>
+      <button class="deck-btn primary" id="next-slide-btn" onclick="nextSlide()">
+        Next
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      </button>
+      <a href="/" class="deck-btn">
+        Launch Live App
+      </a>
+    </div>
+  </header>
+
+  <div class="slide-viewport">
+    <div class="slide-stage">
+
+      <!-- SLIDE 1: System Overview & The Core Loop -->
+      <section class="slide-card active" id="slide-1">
+        <span class="slide-pill">01 • Executive Blueprint</span>
+        <h2 class="slide-title">PulseFit Platform & Core Value Loop</h2>
+        <p class="slide-desc">
+          PulseFit unites fragmented Indian endurance fitness into a self-reinforcing flywheel: athletic training logged on wearables generates verified points that subsidize event entry fees across official marathons, cyclothons, and brevets.
+        </p>
+
+        <div class="arch-diagram-grid">
+          <div class="arch-node" style="--node-accent: #00f59b;">
+            <div class="arch-node-icon">⌚</div>
+            <h4>1. Wearable Ingestion</h4>
+            <p>Strava Webhooks, Apple HealthKit, and Google Health Connect streams continuous pace, cadence, and biometric payloads.</p>
+            <span class="badge-code">REST / Webhook Gateway</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #ffd000;">
+            <div class="arch-node-icon">🛡️</div>
+            <h4>2. Anti-Fraud Gate</h4>
+            <p>Heuristic speed cutoffs (>7.5 m/s running limit), heart rate/cadence cross-correlation, and GPS jitter algorithms reject motorized cheating.</p>
+            <span class="badge-code">Zero-Trust Heuristics</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #00d2ff;">
+            <div class="arch-node-icon">💎</div>
+            <h4>3. Reward Ledger</h4>
+            <p>Immutable double-entry balance credits 1 Pulse Point per 500m of verified activity. Points are non-falsifiable and audit-ready.</p>
+            <span class="badge-code">Double-Entry WAL DB</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #ec4899;">
+            <div class="arch-node-icon">🗺️</div>
+            <h4>4. Event Discovery</h4>
+            <p>Autonomous AI sub-agents harvest Townscript, IndiaRunning, and Audax into a Leaflet Dark Matter Event Radar map with 1-click booking.</p>
+            <span class="badge-code">Sub-Agent Lakehouse</span>
+          </div>
+        </div>
+
+        <div style="background: rgba(0, 245, 155, 0.05); border: 1px solid rgba(0, 245, 155, 0.2); border-radius: 12px; padding: 18px; margin-top: 20px; font-size: 0.9rem;">
+          <strong style="color: var(--accent-neon);">The Business Flywheel:</strong> Users run $\rightarrow$ Earn verifiable discount points $\rightarrow$ Register for marathons on PulseFit $\rightarrow$ Event organizers and sponsors fund the reward pool to acquire high-intent endurance athletes.
+        </div>
+      </section>
+
+      <!-- SLIDE 2: Hub-and-Spoke Sub-Agent Hierarchy -->
+      <section class="slide-card" id="slide-2">
+        <span class="slide-pill">02 • Autonomous Ingestion</span>
+        <h2 class="slide-title">Hub-and-Spoke Multi-Agent Architecture</h2>
+        <p class="slide-desc">
+          Governed by <code>AGENTS.md</code>, a Lead Data Engineering Orchestrator coordinates specialized sub-agents with distinct rate-limiting, internal API reverse-engineering, and anti-bot evasion policies.
+        </p>
+
+        <div class="arch-diagram-grid">
+          <div class="arch-node" style="--node-accent: #00f59b;">
+            <div class="arch-node-icon">🧠</div>
+            <h4>Lead DE Orchestrator</h4>
+            <p>Dispatches crawl sweeps, monitors job queues, tracks data staleness, and halts corrupted schemas before they enter production.</p>
+            <span class="badge-code">Coordinator & Arbiter</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #38bdf8;">
+            <div class="arch-node-icon">🎫</div>
+            <h4>Townscript Worker</h4>
+            <p>Reverse-engineers internal JSON search endpoints for endurance sports across Chennai, Bengaluru, and Coimbatore.</p>
+            <span class="badge-code">2 req/sec • Jitter</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #a855f7;">
+            <div class="arch-node-icon">🏅</div>
+            <h4>IndiaRunning Worker</h4>
+            <p>Extracts Procam / official marquee races (TCS World 10K, Mumbai Marathon) including bib categories and qualifying cutoffs.</p>
+            <span class="badge-code">Official Marathon Feeds</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #f59e0b;">
+            <div class="arch-node-icon">🚴</div>
+            <h4>Brevet / Audax Worker</h4>
+            <p>Scrapes Audax India Randonneurs (AIR) calendars for 200K, 300K, 400K, 600K long-distance cycling brevets and time limits.</p>
+            <span class="badge-code">Homologation Feeds</span>
+          </div>
+        </div>
+
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; margin-top: 20px;">
+          <h4 style="margin: 0 0 10px; color: white;">Anti-Bot & Anti-IP Blocking Defenses</h4>
+          <ul style="margin: 0; padding-left: 20px; color: #9ca3af; font-size: 0.88rem; line-height: 1.7;">
+            <li><strong>Change Data Capture (CDC):</strong> SHA-256 fingerprinting checks if payload changed; skips re-crawling unchanged events.</li>
+            <li><strong>Internal JSON APIs:</strong> Requests lightweight JSON backend endpoints instead of parsing heavy bot-protected web pages.</li>
+            <li><strong>Headless CDP Fallback:</strong> Real browser contexts with real user-agent cookies only when Cloudflare challenges appear.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: Medallion Data Lakehouse -->
+      <section class="slide-card" id="slide-3">
+        <span class="slide-pill">03 • Data Lakehouse</span>
+        <h2 class="slide-title">The Medallion Data Lakehouse Architecture</h2>
+        <p class="slide-desc">
+          To ensure absolute data integrity and lineage, scraped data flows strictly through three validated tiers with an automated Dead Letter Queue (DLQ).
+        </p>
+
+        <table class="arch-flow-table">
+          <thead>
+            <tr>
+              <th>Layer</th>
+              <th>Table Name</th>
+              <th>Schema Contract</th>
+              <th>Business Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="slide-pill" style="color: #818cf8; border-color: #818cf8; background: rgba(129, 140, 248, 0.1);">Bronze</span></td>
+              <td><code>lakehouse_bronze</code></td>
+              <td><code>{ id, source, raw_payload, content_hash, crawled_at }</code></td>
+              <td>Immutable raw payload archive; permanent ground truth.</td>
+            </tr>
+            <tr>
+              <td><span class="slide-pill" style="color: #38bdf8; border-color: #38bdf8; background: rgba(56, 189, 248, 0.1);">Silver</span></td>
+              <td><code>lakehouse_silver</code></td>
+              <td><code>{ title, city, venue, lat, lng, start_date, price_inr }</code></td>
+              <td>Zod-validated, standardized dates, geocodes, and numeric prices.</td>
+            </tr>
+            <tr>
+              <td><span class="slide-pill" style="color: #00f59b; border-color: #00f59b; background: rgba(0, 245, 155, 0.1);">Gold</span></td>
+              <td><code>lakehouse_gold</code></td>
+              <td><code>{ canonical_slug, title, location, distance_tags, booking_urls }</code></td>
+              <td>Deduplicated canonical event records served to production map.</td>
+            </tr>
+            <tr>
+              <td><span class="slide-pill" style="color: #f87171; border-color: #f87171; background: rgba(248, 113, 113, 0.1);">DLQ</span></td>
+              <td><code>lakehouse_dlq</code></td>
+              <td><code>{ source, raw_payload, error_code, quarantined_at }</code></td>
+              <td>Quarantine for events missing mandatory fields or coordinates.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top: 24px; padding: 18px; border-radius: 12px; background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2); font-size: 0.9rem;">
+          <strong style="color: #38bdf8;">Entity Resolution Arbiter:</strong>
+          Resolves multi-platform listings (e.g. Townscript + IndiaRunning for the same marathon) via a 3-pass matcher: Date ($\pm$24h) + Geohash radius (<25km), Jaro-Winkler string similarity, and merges multiple ticket booking URLs into a single canonical entry.
+        </div>
+      </section>
+
+      <!-- SLIDE 4: Biometric Anti-Fraud Engine -->
+      <section class="slide-card" id="slide-4">
+        <span class="slide-pill">04 • Fraud & Trust</span>
+        <h2 class="slide-title">Biometric Wearable Validation Engine</h2>
+        <p class="slide-desc">
+          Because points translate directly into financial event registration discounts, our zero-trust fraud engine inspects every uploaded workout for motorized pacing, GPS faking, or synthetic data.
+        </p>
+
+        <div class="arch-diagram-grid">
+          <div class="arch-node" style="--node-accent: #f87171;">
+            <div class="arch-node-icon">🏎️</div>
+            <h4>Velocity Threshold Cutoff</h4>
+            <p>Rejects any run with average pace faster than Olympic sprint threshold (&gt;7.5 m/s or 27 km/h) or cycling &gt;18 m/s.</p>
+            <span class="badge-code">Strict Pace Filter</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #fbbf24;">
+            <div class="arch-node-icon">❤️</div>
+            <h4>Biometric Cross-Correlation</h4>
+            <p>Detects spoofing where cadence is 0 or heart rate does not elevate with speed, characteristic of motorized transport.</p>
+            <span class="badge-code">Sensor Fusion</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #a78bfa;">
+            <div class="arch-node-icon">📍</div>
+            <h4>GPS Jitter & Deviation</h4>
+            <p>Rejects mathematically uniform coordinate paths generated by desktop mock location generators.</p>
+            <span class="badge-code">Spatial Entropy</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #34d399;">
+            <div class="arch-node-icon">🔁</div>
+            <h4>Stream Deduplication</h4>
+            <p>Prevents double-claiming the same workout across multiple apps (e.g. Strava + Apple Health synced simultaneously).</p>
+            <span class="badge-code">Hash Matching</span>
+          </div>
+        </div>
+
+        <div style="background: rgba(248, 113, 113, 0.08); border: 1px solid rgba(248, 113, 113, 0.25); border-radius: 12px; padding: 18px; margin-top: 20px; font-size: 0.88rem;">
+          <strong style="color: #f87171;">Audit Trail Guarantee:</strong> Fraudulent activities are never deleted; they are archived in the audit ledger with failure reason codes for dispute resolution and compliance.
+        </div>
+      </section>
+
+      <!-- SLIDE 5: Interactive Event Radar Map -->
+      <section class="slide-card" id="slide-5">
+        <span class="slide-pill">05 • The Selling Point</span>
+        <h2 class="slide-title">Interactive Event Radar Map (Leaflet)</h2>
+        <p class="slide-desc">
+          The centerpiece of the user experience: an athletic dark CartoDB basemap with pulsating neon markers, neighborhood-level precision, live filtering, and integrated registration flow.
+        </p>
+
+        <div class="arch-diagram-grid">
+          <div class="arch-node" style="--node-accent: #00f59b;">
+            <div class="arch-node-icon">📍</div>
+            <h4>Exact Geocoded Venues</h4>
+            <p>Chennai (Besant Nagar, Marina, Nehru Park), Bengaluru (Hennur, Cubbon Park, Sarjapur), and Coimbatore (VOC Park Ground, Race Course).</p>
+            <span class="badge-code">Micro-Coordinates</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #00d2ff;">
+            <div class="arch-node-icon">🎨</div>
+            <h4>Athletic Dark Basemap</h4>
+            <p>CartoDB Dark Matter tiles with zero clutter, custom neon glowing markers keyed by category (Running, Cycling, Triathlons).</p>
+            <span class="badge-code">CartoDB Dark Matter</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #fbbf24;">
+            <div class="arch-node-icon">⚡</div>
+            <h4>Quick Hub Fly-To</h4>
+            <p>One-tap zoom to Bengaluru, Chennai, Coimbatore, or panoramic overview of all South Indian athletic hubs.</p>
+            <span class="badge-code">Instant Panning</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #ec4899;">
+            <div class="arch-node-icon">🎟️</div>
+            <h4>Direct Subsidy Modal</h4>
+            <p>Clicking any marker opens glassmorphic details and triggers the subsidized registration modal with points slider.</p>
+            <span class="badge-code">1-Click Conversion</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: Production Deployment on Railway -->
+      <section class="slide-card" id="slide-6">
+        <span class="slide-pill">06 • Infrastructure & Hosting</span>
+        <h2 class="slide-title">Railway Cloud Deployment Topology</h2>
+        <p class="slide-desc">
+          Packaged for zero-downtime deployment on Railway, combining Node.js microservices, persistent SQLite disk storage, and static web distribution.
+        </p>
+
+        <div class="arch-diagram-grid">
+          <div class="arch-node" style="--node-accent: #38bdf8;">
+            <div class="arch-node-icon">🚂</div>
+            <h4>Railway Container</h4>
+            <p>Single container running Node.js + Express. Serves API endpoints and Leaflet frontend without CORS issues.</p>
+            <span class="badge-code">railway.toml • Nixpacks</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #ffd000;">
+            <div class="arch-node-icon">💾</div>
+            <h4>Persistent Volume Storage</h4>
+            <p>Attached Railway disk preserves the SQLite database (<code>pipeline_lakehouse.db</code>) across automatic redeployments.</p>
+            <span class="badge-code">Persistent Mount /data</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #00f59b;">
+            <div class="arch-node-icon">🔄</div>
+            <h4>Git-Driven CI/CD</h4>
+            <p>Every push to <code>fitness_app_project.git</code> triggers automated TypeScript build and rollout.</p>
+            <span class="badge-code">GitHub Webhook CD</span>
+          </div>
+
+          <div class="arch-node" style="--node-accent: #a855f7;">
+            <div class="arch-node-icon">🔒</div>
+            <h4>Edge SSL & Routing</h4>
+            <p>Automatic SSL certificates, low-latency edge routing, and automatic restart policy on failure.</p>
+            <span class="badge-code">HTTPS / Auto-Cert</span>
+          </div>
+        </div>
+
+        <div style="background: rgba(0, 245, 155, 0.08); border: 1px solid var(--accent-neon); border-radius: 12px; padding: 20px; margin-top: 20px; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-weight: 700; color: white;">Ready for Deployment</div>
+            <div style="font-size: 0.85rem; color: #9ca3af;">Configured with <code>railway.toml</code> and verified production scripts.</div>
+          </div>
+          <a href="/" class="deck-btn primary">
+            Explore Live Platform
+          </a>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Slide Thumbnails Bar -->
+    <div class="deck-thumbnails">
+      <button class="thumb-btn active" onclick="goToSlide(1)">
+        <span class="thumb-num">01</span>
+        Core Value Loop
+      </button>
+      <button class="thumb-btn" onclick="goToSlide(2)">
+        <span class="thumb-num">02</span>
+        Sub-Agent Pipeline
+      </button>
+      <button class="thumb-btn" onclick="goToSlide(3)">
+        <span class="thumb-num">03</span>
+        Medallion Lakehouse
+      </button>
+      <button class="thumb-btn" onclick="goToSlide(4)">
+        <span class="thumb-num">04</span>
+        Anti-Fraud Engine
+      </button>
+      <button class="thumb-btn" onclick="goToSlide(5)">
+        <span class="thumb-num">05</span>
+        Event Radar Map
+      </button>
+      <button class="thumb-btn" onclick="goToSlide(6)">
+        <span class="thumb-num">06</span>
+        Railway Deployment
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 6;
+
+    function updateSlideUI() {
+      // Toggle slide visibility
+      for (let i = 1; i <= totalSlides; i++) {
+        const slide = document.getElementById(`slide-${i}`);
+        if (slide) {
+          slide.classList.toggle('active', i === currentSlide);
+        }
+      }
+
+      // Update thumbnails
+      const thumbs = document.querySelectorAll('.thumb-btn');
+      thumbs.forEach((thumb, idx) => {
+        thumb.classList.toggle('active', (idx + 1) === currentSlide);
+      });
+
+      // Update counter
+      document.getElementById('slide-counter').innerText = `Slide ${currentSlide} of ${totalSlides}`;
+      
+      // Update prev/next button states
+      document.getElementById('prev-slide-btn').disabled = currentSlide === 1;
+      document.getElementById('next-slide-btn').disabled = currentSlide === totalSlides;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideUI();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideUI();
+      }
+    }
+
+    function goToSlide(num) {
+      if (num >= 1 && num <= totalSlides) {
+        currentSlide = num;
+        updateSlideUI();
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    updateSlideUI();
+  </script>
+</body>
+</html>

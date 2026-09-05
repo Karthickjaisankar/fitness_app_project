@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseFit - Unified Fitness Calendar, Wearable Rewards & Anti-Fraud Ledger</title>
+  <meta name="description" content="Next-generation fitness platform combining autonomous event calendar aggregation, Strava & Apple Health wearable ingestion, and anti-fraud reward ledger." />
+  
+  <!-- Modern Athletic Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Leaflet CSS for Dark Athletic Event Radar Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+
+  <!-- Sticky Header & Nav -->
+  <header class="app-header">
+    <div class="header-content">
+      <a href="#" class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="brand-text">
+          <h1>PulseFit</h1>
+          <span class="brand-tagline">Webhooks • Anti-Fraud • Rewards</span>
+        </div>
+      </a>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab-btn active" data-tab="map" role="tab">
+          <span class="animate-pulse-glow" style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent-neon); display: inline-block;"></span>
+          Event Radar Map
+        </button>
+        <button class="nav-tab-btn" data-tab="events" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 4h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
+          Events Calendar
+        </button>
+        <button class="nav-tab-btn" data-tab="simulator" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.05.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.01-4.09l-2.49-1.47C16.14 17.76 14.21 19 12 19z"/></svg>
+          Wearable Sync Lab
+        </button>
+        <button class="nav-tab-btn" data-tab="ledger" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+          Rewards & Ledger
+        </button>
+        <button class="nav-tab-btn" data-tab="chapters" role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          Chapters & SOS
+        </button>
+        <a href="/architecture.html" class="nav-tab-btn" target="_blank" style="text-decoration: none; border-color: rgba(56, 189, 248, 0.3); color: #38bdf8;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          Architecture Deck ↗
+        </a>
+      </nav>
+
+      <!-- User Chip -->
+      <div class="header-user">
+        <div class="points-pill">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--accent-gold)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/></svg>
+          <span class="points-number" id="header-points-val">840</span>
+          <span style="font-size: 0.75rem; font-weight: 700; color: var(--accent-gold);">PTS</span>
+        </div>
+        <div class="user-avatar-wrap">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Karthick Jaisankar" />
+          <div>
+            <div style="font-size: 0.85rem; font-weight: 700;">Karthick J.</div>
+            <span class="glass-pill badge-gold" id="header-tier-badge" style="font-size: 0.7rem; padding: 1px 8px;">Gold Athlete</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-container">
+
+    <!-- Hero Stats Bar -->
+    <section class="hero-stats-grid">
+      <!-- Stat 1: Total Points -->
+      <div class="glass-panel stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">Total Reward Balance</span>
+          <div class="stat-icon" style="background: rgba(251, 191, 36, 0.15); color: var(--accent-gold);">
+            💎
+          </div>
+        </div>
+        <div class="stat-value" id="hero-points-balance">840</div>
+        <div class="stat-subtext" id="hero-lifetime-points">1,290 lifetime earned</div>
+      </div>
+
+      <!-- Stat 2: Daily Earning Cap -->
+      <div class="glass-panel stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">Daily Earning Cap</span>
+          <div class="stat-icon" style="background: rgba(0, 245, 155, 0.15); color: var(--accent-neon);">
+            ⚡
+          </div>
+        </div>
+        <div class="stat-value" id="hero-today-earned" style="color: var(--accent-neon);">50 / 250 PTS</div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="hero-cap-bar" style="width: 20%;"></div>
+        </div>
+        <div class="stat-subtext" id="hero-cap-remaining" style="margin-top: 6px;">200 PTS daily allowance remaining</div>
+      </div>
+
+      <!-- Stat 3: Direct Wearable Sync Status -->
+      <div class="glass-panel stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">Wearable Webhook Guard</span>
+          <div class="stat-icon" style="background: rgba(0, 210, 255, 0.15); color: var(--accent-cyan);">
+            📡
+          </div>
+        </div>
+        <div class="stat-value" style="font-size: 1.7rem; color: var(--accent-cyan);">Active Push</div>
+        <div class="stat-subtext" id="hero-strava-saved">4,820 API calls saved vs polling</div>
+      </div>
+
+      <!-- Stat 4: Event Aggregator -->
+      <div class="glass-panel stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">Event Ingestion Layer</span>
+          <div class="stat-icon" style="background: rgba(157, 78, 221, 0.15); color: var(--accent-purple);">
+            🤖
+          </div>
+        </div>
+        <div class="stat-value" id="hero-total-distance">129.4 KM</div>
+        <div class="stat-subtext">Total verified workout distance</div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 0: EVENT RADAR MAP (PRIMARY SELLING POINT)                    -->
+    <!-- ================================================================= -->
+    <section class="tab-content active" id="tab-map">
+      <div class="map-view-container">
+        <!-- Map Canvas & Floating Controls -->
+        <div class="radar-map-wrapper">
+          <div class="map-floating-bar">
+            <!-- Quick Hub Fly-To Buttons -->
+            <div class="map-hub-pills">
+              <button class="map-hub-btn active" data-hub="All">🌐 All Hubs</button>
+              <button class="map-hub-btn" data-hub="Bengaluru">📍 Bengaluru (35)</button>
+              <button class="map-hub-btn" data-hub="Chennai">📍 Chennai (8)</button>
+              <button class="map-hub-btn" data-hub="Coimbatore">📍 Coimbatore (5)</button>
+            </div>
+            
+            <div class="glass-pill badge-neon" style="font-size: 0.75rem;">
+              <span class="animate-pulse-glow" style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent-neon); display: inline-block;"></span>
+              Live Geocoded Coordinates
+            </div>
+          </div>
+
+          <!-- Map Div -->
+          <div id="event-radar-map"></div>
+
+          <!-- Map Legend -->
+          <div class="map-legend">
+            <div class="legend-item"><span class="legend-dot" style="background: #00f59b;"></span> 5K / 10K</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #00d2ff;"></span> 21K Half</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #9d4edd;"></span> 42K Full</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #fbbf24;"></span> Ultra / Brevet</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #ff6b35;"></span> Cycling</div>
+          </div>
+        </div>
+
+        <!-- Side Event Explorer -->
+        <div class="map-sidebar">
+          <div class="map-sidebar-header">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h4 style="font-family: var(--font-family-display); font-size: 1.15rem; font-weight: 800; color: #fff;">
+                Nearby Events
+              </h4>
+              <span class="glass-pill badge-cyan" id="map-filtered-count" style="font-size: 0.75rem;">48 Live Events</span>
+            </div>
+            <input type="text" id="map-sidebar-search" placeholder="Search event by name or venue..." style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); color: #fff; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.85rem; outline: none;" />
+          </div>
+          <div class="map-sidebar-list" id="map-events-list">
+            <!-- Loaded dynamically by map.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 1: EVENTS CALENDAR                                            -->
+    <!-- ================================================================= -->
+    <section class="tab-content" id="tab-events">
+      <!-- Search & Filters Bar -->
+      <div class="glass-panel controls-bar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" id="search-events-input" placeholder="Search by event title, organizer, city, or tags (e.g. Marathon, 10K, Triathlon)..." />
+        </div>
+
+        <!-- City Dropdown -->
+        <div style="min-width: 200px;">
+          <select id="city-filter-select" style="width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-active); color: #fff; padding: 11px 16px; border-radius: var(--radius-md); font-family: inherit; font-weight: 600; outline: none; cursor: pointer;">
+            <option value="All">All Priority Hubs</option>
+            <option value="Bengaluru" selected>📍 Bengaluru Hub</option>
+            <option value="Chennai">📍 Chennai Hub</option>
+            <option value="Coimbatore">📍 Coimbatore Hub</option>
+          </select>
+        </div>
+
+        <!-- Scraper Trigger Action -->
+        <button class="btn btn-secondary" id="trigger-scraper-btn" title="Trigger autonomous Townscript & Eventbrite scraper sweep">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+          Run Hub Sweep
+        </button>
+      </div>
+
+      <!-- Priority Hubs & Category Filter Pills -->
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+        <!-- Hub Selector Pills -->
+        <div class="filter-pills" id="city-pills-row">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Priority Hubs:</span>
+          <button class="filter-pill city-filter-pill active" data-city="All">All Hubs (48 Events)</button>
+          <button class="filter-pill city-filter-pill" data-city="Bengaluru">Bengaluru (35)</button>
+          <button class="filter-pill city-filter-pill" data-city="Chennai">Chennai (8)</button>
+          <button class="filter-pill city-filter-pill" data-city="Coimbatore">Coimbatore (5)</button>
+        </div>
+
+        <!-- Distance Filter Pills -->
+        <div class="filter-pills">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Disciplines:</span>
+          <button class="filter-pill cat-filter-pill active" data-category="All">All Categories</button>
+          <button class="filter-pill cat-filter-pill" data-category="10k">10K Runs</button>
+          <button class="filter-pill cat-filter-pill" data-category="half_marathon">Half Marathons (21K)</button>
+          <button class="filter-pill cat-filter-pill" data-category="marathon">Full Marathons (42K)</button>
+          <button class="filter-pill cat-filter-pill" data-category="cycling">Cyclothons & Brevets</button>
+          <button class="filter-pill cat-filter-pill" data-category="triathlon">Triathlons & Duathlons</button>
+        </div>
+      </div>
+
+      <!-- Events Grid -->
+      <div class="events-grid" id="events-grid">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 2: WEARABLE SYNC & ANTI-FRAUD SIMULATOR (Core Loop)           -->
+    <!-- ================================================================= -->
+    <section class="tab-content" id="tab-simulator">
+      <div class="simulator-grid">
+        <!-- Left: Control Panel & Ingestion Triggers -->
+        <div class="glass-panel sim-control-panel">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <h3 style="font-family: var(--font-family-display); font-size: 1.35rem; font-weight: 800;">
+              Activity Ingestion Test Lab
+            </h3>
+            <span class="glass-pill badge-neon" style="font-size: 0.75rem;">Strava Webhooks & HealthKit</span>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 20px;">
+            Test the real-time ingestion pipeline. Push simulated workouts from wearable devices (Strava API webhooks or Apple HealthKit / Google Health Connect) to observe anti-fraud validation and transactional ledger crediting.
+          </p>
+
+          <h4 style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 10px;">
+            1-Click Preset Scenarios:
+          </h4>
+
+          <div class="sim-presets">
+            <!-- Preset 1: Legit 5K Run -->
+            <div class="preset-card sim-preset-btn" data-title="Cubbon Park Sunrise 5K" data-type="run" data-dist="5000" data-dur="1560">
+              <div class="preset-info">
+                <h4>
+                  <span style="color: var(--accent-neon);">●</span>
+                  Legit 5K Morning Run
+                </h4>
+                <p>5.0 km in 26 mins (Pace: 5:12 /km) • <strong>Normal human pace</strong></p>
+              </div>
+              <span class="glass-pill badge-neon">+50 PTS</span>
+            </div>
+
+            <!-- Preset 2: Legit 30K Cycling -->
+            <div class="preset-card sim-preset-btn" data-title="Hebbal Expressway Pace Ride" data-type="ride" data-dist="30000" data-dur="3900">
+              <div class="preset-info">
+                <h4>
+                  <span style="color: var(--accent-cyan);">●</span>
+                  Legit 30K Road Cycling
+                </h4>
+                <p>30.0 km in 65 mins (Speed: 27.7 km/h) • <strong>Legitimate cycling workout</strong></p>
+              </div>
+              <span class="glass-pill badge-cyan">+100 PTS</span>
+            </div>
+
+            <!-- Preset 3: Impossible Pace / Scooter Cheat -->
+            <div class="preset-card sim-preset-btn" data-title="Motorized Highway Dash" data-type="run" data-dist="10000" data-dur="600" data-cheat="impossible_pace">
+              <div class="preset-info">
+                <h4>
+                  <span style="color: var(--status-danger);">●</span>
+                  Fraud: Impossible Sprint (Scooter / Car)
+                </h4>
+                <p>10.0 km in 10 mins (Pace: 1:00 /km, 60 km/h) • <strong>Triggers biometric pace anomaly</strong></p>
+              </div>
+              <span class="glass-pill badge-danger">FLAGGED</span>
+            </div>
+
+            <!-- Preset 4: GPS Jump / Spoofing -->
+            <div class="preset-card sim-preset-btn" data-title="Spoofed Coordinate Teleport" data-type="run" data-dist="8000" data-dur="1800" data-cheat="gps_jump">
+              <div class="preset-info">
+                <h4>
+                  <span style="color: var(--status-danger);">●</span>
+                  Fraud: GPS Teleportation Spoof
+                </h4>
+                <p>Bengaluru to Mumbai in 5 sec • <strong>Triggers telemetry jump detector (>120 km/h)</strong></p>
+              </div>
+              <span class="glass-pill badge-danger">REJECTED</span>
+            </div>
+          </div>
+
+          <!-- Custom Workout Form -->
+          <div style="border-top: 1px solid var(--border-subtle); padding-top: 18px; margin-top: 20px;">
+            <h4 style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 12px;">
+              Custom Workout Simulator:
+            </h4>
+            <form id="custom-sim-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div style="grid-column: 1/-1;">
+                <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">Activity Title</label>
+                <input type="text" id="sim-custom-title" value="Evening Aerobic Workout" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); padding: 8px 12px; border-radius: var(--radius-sm); color: #fff; outline: none;" required />
+              </div>
+              <div>
+                <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">Discipline</label>
+                <select id="sim-custom-type" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); padding: 8px 12px; border-radius: var(--radius-sm); color: #fff; outline: none;">
+                  <option value="run">Running (1 KM = 10 PTS)</option>
+                  <option value="ride">Cycling (3 KM = 10 PTS)</option>
+                  <option value="walk">Walking (1 KM = 10 PTS)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">Distance (KM)</label>
+                <input type="number" step="0.1" id="sim-custom-dist" value="7.5" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); padding: 8px 12px; border-radius: var(--radius-sm); color: #fff; outline: none;" required />
+              </div>
+              <div style="grid-column: 1/-1;">
+                <label style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">Duration (Minutes)</label>
+                <input type="number" step="1" id="sim-custom-dur" value="40" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); padding: 8px 12px; border-radius: var(--radius-sm); color: #fff; outline: none;" required />
+              </div>
+              <div style="grid-column: 1/-1; margin-top: 6px;">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                  Push Workout to Backend & Validate
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right: Real-time Evaluation Console & Telemetry History -->
+        <div class="glass-panel antifraud-console">
+          <div class="console-header">
+            <div>
+              <h3 style="font-family: var(--font-family-display); font-size: 1.35rem; font-weight: 800;">
+                Anti-Fraud Telemetry Stream
+              </h3>
+              <p style="font-size: 0.8rem; color: var(--text-secondary);">Real-time pace, speed & GPS integrity analysis</p>
+            </div>
+            <span class="glass-pill badge-gold" style="font-size: 0.75rem;">Cap: 250 PTS/Day</span>
+          </div>
+
+          <!-- Dynamic Output Console -->
+          <div id="sim-output-console">
+            <div style="text-align: center; padding: 48px 20px; color: var(--text-muted);">
+              <div style="font-size: 2.2rem; margin-bottom: 12px;">🛡️</div>
+              <div style="font-weight: 700; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 6px;">Ready for Ingestion</div>
+              <p style="font-size: 0.85rem;">Click any preset on the left or submit a custom workout to trigger live anti-fraud telemetry verification.</p>
+            </div>
+          </div>
+
+          <h4 style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-top: 20px; margin-bottom: 10px;">
+            Recent Verified Activities
+          </h4>
+          <div id="antifraud-history-list">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 3: REWARD LEDGER & VOUCHER MARKETPLACE                        -->
+    <!-- ================================================================= -->
+    <section class="tab-content" id="tab-ledger">
+      <div style="margin-bottom: 32px;">
+        <h3 style="font-family: var(--font-family-display); font-size: 1.5rem; font-weight: 800; margin-bottom: 6px;">
+          Redeemable Rewards & Partner Perks
+        </h3>
+        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+          Exchange your earned mileage points for nutrition packs, GPS watch vouchers, and marathon bib discounts.
+        </p>
+      </div>
+
+      <!-- Rewards Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 40px;" id="rewards-grid">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Transaction Ledger Table -->
+      <div class="glass-panel" style="padding: 24px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+          <div>
+            <h3 style="font-family: var(--font-family-display); font-size: 1.3rem; font-weight: 800;">
+              Double-Entry Transaction Ledger
+            </h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Immutable audit log of all point earnings and redemptions</p>
+          </div>
+          <span class="glass-pill badge-neon">ACID Validated</span>
+        </div>
+
+        <div class="ledger-table-wrap">
+          <table class="ledger-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Transaction Description</th>
+                <th>Status</th>
+                <th>Points Flow</th>
+                <th>Balance After</th>
+              </tr>
+            </thead>
+            <tbody id="ledger-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- TAB 4: CHAPTERS & SOS BEACON (Phase 2 Preview)                    -->
+    <!-- ================================================================= -->
+    <section class="tab-content" id="tab-chapters">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px;">
+        <!-- Left: Chapter Leaderboard -->
+        <div class="glass-panel" style="padding: 28px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <div>
+              <h3 style="font-family: var(--font-family-display); font-size: 1.35rem; font-weight: 800;">
+                Verified Chapter Leaderboard
+              </h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary);">Aggregated weekly kilometers by community running groups</p>
+            </div>
+            <span class="glass-pill badge-cyan">Phase 2 UGC</span>
+          </div>
+
+          <div id="chapters-list">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Right: Safety & SOS Live Beacon -->
+        <div class="glass-panel" style="padding: 28px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+              <div>
+                <h3 style="font-family: var(--font-family-display); font-size: 1.35rem; font-weight: 800;">
+                  Safety & SOS Live Beacon
+                </h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">Broadcast real-time GPS telemetry to emergency contacts</p>
+              </div>
+              <span class="glass-pill badge-danger">Emergency Ready</span>
+            </div>
+
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px;">
+              Similar to Strava Beacon, this feature broadcasts your live coordinate trail to designated emergency contacts and alerts local emergency dispatch based on your current geofence.
+            </p>
+
+            <div id="sos-output-card" style="display: none; margin-bottom: 20px;"></div>
+          </div>
+
+          <div>
+            <button class="btn btn-danger" id="trigger-sos-btn" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+              Broadcast Live SOS Beacon
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================================================================= -->
+  <!-- MODAL: REGISTRATION & POINTS DISCOUNT REDEMPTION                  -->
+  <!-- ================================================================= -->
+  <div class="modal-backdrop" id="registration-modal">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px;">
+        <div>
+          <span class="glass-pill badge-cyan" style="font-size: 0.75rem; margin-bottom: 6px;">Direct Event Ticketing</span>
+          <h3 id="modal-event-title" style="font-family: var(--font-family-display); font-size: 1.3rem; font-weight: 800;">
+            Event Registration
+          </h3>
+        </div>
+        <button id="close-modal-btn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.4rem;">×</button>
+      </div>
+
+      <div style="margin-bottom: 18px;">
+        <label style="font-size: 0.85rem; color: var(--text-secondary); display: block; margin-bottom: 6px;">Choose Distance Category</label>
+        <select id="modal-category-select" style="width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: #fff; padding: 10px 14px; border-radius: var(--radius-md); font-family: inherit; outline: none; cursor: pointer;">
+          <!-- Populated dynamically -->
+        </select>
+      </div>
+
+      <!-- Points Discount Slider -->
+      <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 0.85rem; font-weight: 700;">Redeem Points for Discount</span>
+          <span id="modal-points-val" style="font-family: var(--font-family-display); font-weight: 800; color: var(--accent-gold);">100 PTS</span>
+        </div>
+        <input type="range" id="modal-points-slider" min="0" max="300" step="10" value="100" style="width: 100%; accent-color: var(--accent-gold); cursor: pointer;" />
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+          <span>0 PTS (₹0 discount)</span>
+          <span>100 PTS = ₹200 OFF</span>
+        </div>
+      </div>
+
+      <!-- Price Breakdown -->
+      <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 6px;">
+          <span style="color: var(--text-secondary);">Points Discount:</span>
+          <span id="modal-discount-inr" style="font-weight: 700; color: var(--accent-neon);">-₹200</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 800;">
+          <span>Payable Amount:</span>
+          <span id="modal-final-price" style="font-family: var(--font-family-display); color: var(--text-primary);">₹1,350</span>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-secondary" id="cancel-modal-btn" style="flex: 1;">Cancel</button>
+        <button class="btn btn-primary" id="confirm-register-btn" style="flex: 2;">Confirm Registration</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Leaflet Map JS Library -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Main JavaScript App -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

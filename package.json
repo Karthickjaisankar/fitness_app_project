@@ -1,0 +1,12 @@
+{
+  "name": "pulsefit-platform",
+  "version": "1.0.0",
+  "description": "PulseFit - Unified Fitness Calendar, Wearable Rewards & Anti-Fraud Ledger",
+  "main": "backend/dist/server.js",
+  "scripts": {
+    "postinstall": "npm --prefix backend install",
+    "build": "npm --prefix backend run build",
+    "start": "npm --prefix backend run start",
+    "dev": "npm --prefix backend run dev"
+  }
+}
