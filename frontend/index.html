@@ -82,13 +82,32 @@
   <!-- Main Container -->
   <main class="app-container">
 
-    <!-- Hero Stats Bar -->
+    <!-- Apple-style Editorial Hero Presentation -->
+    <section class="apple-hero-headline" style="text-align: center; margin-bottom: 44px; padding: 12px 0 6px;">
+      <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 5px 16px; border-radius: 9999px; margin-bottom: 18px; font-size: 0.8rem; font-weight: 500; color: #86868b; backdrop-filter: blur(20px);">
+        <span class="animate-pulse-glow" style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #30D158;"></span>
+        <span>PulseFit Autonomous Ingestion Engine</span>
+        <span style="color: rgba(255,255,255,0.2);">•</span>
+        <span style="color: #f5f5f7;">193 Verified Events Across India</span>
+      </div>
+      <h2 style="font-family: var(--font-family-display); font-size: clamp(2.3rem, 4.5vw, 3.6rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.08; color: #f5f5f7; margin-bottom: 12px;">
+        Endurance, unified.<br />
+        <span style="background: linear-gradient(135deg, #30D158 0%, #00F5FF 45%, #BF5AF2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          Rewarding every stride.
+        </span>
+      </h2>
+      <p style="font-size: clamp(0.95rem, 1.8vw, 1.2rem); color: #86868b; max-width: 660px; margin: 0 auto; letter-spacing: -0.015em; line-height: 1.5; font-weight: 400;">
+        Direct multi-source discovery across India's premier endurance catalogs. Live biometric anti-fraud telemetry paired with tamper-proof athlete reward ledgers.
+      </p>
+    </section>
+
+    <!-- Hero Stats Grid (Apple Fitness+ Bento Cards) -->
     <section class="hero-stats-grid">
       <!-- Stat 1: Total Points -->
-      <div class="glass-panel stat-card">
+      <div class="stat-card">
         <div class="stat-card-header">
-          <span class="stat-label">Total Reward Balance</span>
-          <div class="stat-icon" style="background: rgba(251, 191, 36, 0.15); color: var(--accent-gold);">
+          <span class="stat-label">Reward Balance</span>
+          <div class="stat-icon" style="background: rgba(255, 214, 10, 0.12); color: #FFD60A; border-color: rgba(255, 214, 10, 0.25);">
             💎
           </div>
         </div>
@@ -97,38 +116,38 @@
       </div>
 
       <!-- Stat 2: Daily Earning Cap -->
-      <div class="glass-panel stat-card">
+      <div class="stat-card">
         <div class="stat-card-header">
           <span class="stat-label">Daily Earning Cap</span>
-          <div class="stat-icon" style="background: rgba(0, 245, 155, 0.15); color: var(--accent-neon);">
+          <div class="stat-icon" style="background: rgba(48, 209, 88, 0.12); color: #30D158; border-color: rgba(48, 209, 88, 0.25);">
             ⚡
           </div>
         </div>
-        <div class="stat-value" id="hero-today-earned" style="color: var(--accent-neon);">50 / 250 PTS</div>
+        <div class="stat-value" id="hero-today-earned" style="color: #30D158;">50 / 250 PTS</div>
         <div class="progress-bar-wrap">
           <div class="progress-bar-fill" id="hero-cap-bar" style="width: 20%;"></div>
         </div>
-        <div class="stat-subtext" id="hero-cap-remaining" style="margin-top: 6px;">200 PTS daily allowance remaining</div>
+        <div class="stat-subtext" id="hero-cap-remaining" style="margin-top: 8px;">200 PTS daily allowance remaining</div>
       </div>
 
       <!-- Stat 3: Direct Wearable Sync Status -->
-      <div class="glass-panel stat-card">
+      <div class="stat-card">
         <div class="stat-card-header">
-          <span class="stat-label">Wearable Webhook Guard</span>
-          <div class="stat-icon" style="background: rgba(0, 210, 255, 0.15); color: var(--accent-cyan);">
+          <span class="stat-label">Wearable Sync Guard</span>
+          <div class="stat-icon" style="background: rgba(0, 245, 255, 0.12); color: #00F5FF; border-color: rgba(0, 245, 255, 0.25);">
             📡
           </div>
         </div>
-        <div class="stat-value" style="font-size: 1.7rem; color: var(--accent-cyan);">Active Push</div>
+        <div class="stat-value" style="font-size: 1.75rem; color: #00F5FF;">Active Push</div>
         <div class="stat-subtext" id="hero-strava-saved">4,820 API calls saved vs polling</div>
       </div>
 
       <!-- Stat 4: Event Aggregator -->
-      <div class="glass-panel stat-card">
+      <div class="stat-card">
         <div class="stat-card-header">
-          <span class="stat-label">Event Ingestion Layer</span>
-          <div class="stat-icon" style="background: rgba(157, 78, 221, 0.15); color: var(--accent-purple);">
-            🤖
+          <span class="stat-label">Verified Distance</span>
+          <div class="stat-icon" style="background: rgba(191, 90, 242, 0.12); color: #BF5AF2; border-color: rgba(191, 90, 242, 0.25);">
+            🏃
           </div>
         </div>
         <div class="stat-value" id="hero-total-distance">129.4 KM</div>

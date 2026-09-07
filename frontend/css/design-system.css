@@ -1,65 +1,70 @@
 /* ==========================================================================
-   FITPULSE DESIGN SYSTEM
-   Modern Athletic Dark Theme, Glassmorphism, Fluid Micro-interactions
+   PULSEFIT — APPLE DESIGN SYSTEM
+   Deep Midnight Titanium, Liquid Glass (30px blur), SF Pro Typography,
+   and Apple Watch Activity Ring Aesthetics
    ========================================================================== */
 
 :root {
-  /* Color Palette */
-  --bg-primary: #0a0e17;
-  --bg-secondary: #111827;
-  --bg-card: rgba(22, 31, 48, 0.7);
-  --bg-card-hover: rgba(30, 41, 64, 0.85);
-  --bg-glass: rgba(17, 24, 39, 0.65);
-  --bg-glass-card: rgba(255, 255, 255, 0.03);
+  /* Apple Midnight Titanium Palette */
+  --bg-primary: #000000;
+  --bg-secondary: #121214;
+  --bg-tertiary: #1c1c1e;
+  --bg-card: rgba(28, 28, 30, 0.72);
+  --bg-card-hover: rgba(44, 44, 46, 0.85);
+  --bg-glass: rgba(20, 20, 22, 0.78);
+  --bg-glass-card: rgba(255, 255, 255, 0.04);
 
-  /* Neon Athletic Accents */
-  --accent-neon: #00f59b;
-  --accent-neon-glow: rgba(0, 245, 155, 0.35);
-  --accent-cyan: #00d2ff;
-  --accent-cyan-glow: rgba(0, 210, 255, 0.35);
-  --accent-orange: #ff6b35;
-  --accent-purple: #9d4edd;
-  --accent-gold: #fbbf24;
-  --accent-gold-glow: rgba(251, 191, 36, 0.3);
+  /* Apple Fitness Activity Accents */
+  --accent-neon: #30D158;          /* Apple Watch Activity Ring Green */
+  --accent-neon-glow: rgba(48, 209, 88, 0.35);
+  --accent-cyan: #00F5FF;          /* Apple Fitness Cyan / GPS Pace */
+  --accent-cyan-glow: rgba(0, 245, 255, 0.35);
+  --accent-orange: #FF9F0A;        /* Apple Workout Orange */
+  --accent-purple: #BF5AF2;        /* Apple Ultra Purple */
+  --accent-gold: #FFD60A;          /* Apple Titanium Gold */
+  --accent-gold-glow: rgba(255, 214, 10, 0.3);
 
-  /* Status Colors */
-  --status-success: #10b981;
-  --status-warning: #f59e0b;
-  --status-danger: #ef4444;
-  --status-info: #3b82f6;
+  /* Apple System Status Colors */
+  --status-success: #30D158;
+  --status-warning: #FF9F0A;
+  --status-danger: #FF453A;
+  --status-info: #0A84FF;
 
-  /* Typography */
-  --font-family-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-family-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  /* Apple SF Pro Typography Stack */
+  --font-family-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-family-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-family-mono: "SF Mono", Menlo, Monaco, "Courier New", monospace;
 
-  /* Text Colors */
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
-  --text-inverse: #0a0e17;
+  /* Apple Text Hierarchy */
+  --text-primary: #f5f5f7;
+  --text-secondary: #a1a1a6;
+  --text-muted: #86868b;
+  --text-inverse: #000000;
 
-  /* Borders & Shadows */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-active: rgba(0, 245, 155, 0.5);
-  --border-cyan: rgba(0, 210, 255, 0.4);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
-  --shadow-neon: 0 0 25px var(--accent-neon-glow);
-  --shadow-cyan: 0 0 25px var(--accent-cyan-glow);
+  /* Borders & Liquid Specular Highlights */
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-specular: rgba(255, 255, 255, 0.18);
+  --border-active: rgba(48, 209, 88, 0.6);
+  --border-cyan: rgba(0, 245, 255, 0.5);
 
-  /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  /* Apple Soft Depth Shadows */
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 12px 36px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  --shadow-neon: 0 0 30px var(--accent-neon-glow);
+  --shadow-cyan: 0 0 30px var(--accent-cyan-glow);
+
+  /* Apple Squircle Radii */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
   --radius-xl: 28px;
   --radius-full: 9999px;
 
-  /* Transitions */
-  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Apple Spring Transitions */
+  --transition-fast: 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  --transition-bounce: 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Global Reset */
@@ -72,20 +77,22 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   font-family: var(--font-family-body);
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.5;
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(0, 245, 155, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(0, 210, 255, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(157, 78, 221, 0.03) 0%, transparent 60%);
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 245, 255, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 90% 90%, rgba(48, 209, 88, 0.06) 0%, transparent 60%),
+    radial-gradient(circle at 10% 80%, rgba(191, 90, 242, 0.04) 0%, transparent 50%);
 }
 
 /* Selection */
@@ -94,155 +101,169 @@ body {
   color: #000;
 }
 
-/* Glassmorphism Classes */
+/* Apple Liquid Glass Panels */
 .glass-panel {
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(30px) saturate(190%);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
   transition: var(--transition-normal);
 }
 
 .glass-panel:hover {
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--border-specular);
 }
 
+/* Apple Pill Badge */
 .glass-pill {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-full);
   padding: 6px 14px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
+  letter-spacing: -0.01em;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  transition: var(--transition-fast);
 }
 
-/* Glowing Neon Badges */
+/* Apple Badges */
 .badge-neon {
-  background: rgba(0, 245, 155, 0.12);
+  background: rgba(48, 209, 88, 0.15);
   color: var(--accent-neon);
-  border: 1px solid rgba(0, 245, 155, 0.3);
+  border: 1px solid rgba(48, 209, 88, 0.35);
 }
 
 .badge-cyan {
-  background: rgba(0, 210, 255, 0.12);
+  background: rgba(0, 245, 255, 0.14);
   color: var(--accent-cyan);
-  border: 1px solid rgba(0, 210, 255, 0.3);
+  border: 1px solid rgba(0, 245, 255, 0.35);
 }
 
 .badge-gold {
-  background: rgba(251, 191, 36, 0.12);
+  background: rgba(255, 214, 10, 0.14);
   color: var(--accent-gold);
-  border: 1px solid rgba(251, 191, 36, 0.3);
-}
-
-.badge-danger {
-  background: rgba(239, 68, 68, 0.12);
-  color: var(--status-danger);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(255, 214, 10, 0.35);
 }
 
 .badge-warning {
-  background: rgba(245, 158, 11, 0.12);
+  background: rgba(255, 159, 10, 0.14);
   color: var(--status-warning);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 1px solid rgba(255, 159, 10, 0.35);
 }
 
-/* Buttons */
+.badge-danger {
+  background: rgba(255, 69, 58, 0.14);
+  color: var(--status-danger);
+  border: 1px solid rgba(255, 69, 58, 0.35);
+}
+
+/* Apple Buttons */
 .btn {
-  font-family: var(--font-family-display);
+  font-family: var(--font-family-body);
+  font-size: 0.88rem;
   font-weight: 600;
-  font-size: 0.95rem;
-  padding: 10px 20px;
-  border-radius: var(--radius-md);
-  border: none;
+  letter-spacing: -0.01em;
+  padding: 10px 22px;
+  border-radius: var(--radius-full);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all var(--transition-normal);
   text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  outline: none;
+  border: none;
+}
+
+.btn:active {
+  transform: scale(0.97);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-neon), #00d984);
-  color: #05140d;
-  box-shadow: 0 4px 16px var(--accent-neon-glow);
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 4px 18px rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.9);
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 22px rgba(0, 245, 155, 0.5);
-}
-
-.btn-cyan {
-  background: linear-gradient(135deg, var(--accent-cyan), #00a8cc);
-  color: #03141a;
-  box-shadow: 0 4px 16px var(--accent-cyan-glow);
-}
-
-.btn-cyan:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 22px rgba(0, 210, 255, 0.5);
+  background: #f0f0f2;
+  box-shadow: 0 6px 24px rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
   background: rgba(255, 255, 255, 0.08);
-  color: var(--text-primary);
-  border: 1px solid var(--border-subtle);
+  color: #f5f5f7;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .btn-secondary:hover {
   background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
   transform: translateY(-1px);
 }
 
-.btn-danger {
-  background: rgba(239, 68, 68, 0.15);
-  color: #fca5a5;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+.btn-accent {
+  background: var(--accent-neon);
+  color: #000000;
+  font-weight: 700;
+  box-shadow: var(--shadow-neon);
 }
 
-.btn-danger:hover {
-  background: rgba(239, 68, 68, 0.25);
-  color: #fff;
+.btn-accent:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 35px var(--accent-neon-glow);
+  transform: translateY(-1px);
+}
+
+/* Apple Typography Utility Classes */
+.headline-hero {
+  font-family: var(--font-family-display);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+}
+
+.headline-section {
+  font-family: var(--font-family-display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+}
+
+.text-caption {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: -0.01em;
 }
 
 /* Animations */
-@keyframes pulseGlow {
+@keyframes applePulseGlow {
   0%, 100% {
-    box-shadow: 0 0 15px var(--accent-neon-glow);
+    opacity: 0.4;
+    transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 30px rgba(0, 245, 155, 0.6);
+    opacity: 0.9;
+    transform: scale(1.08);
   }
-}
-
-@keyframes floatAnimation {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
 
 .animate-pulse-glow {
-  animation: pulseGlow 2.5s infinite ease-in-out;
-}
-
-.animate-float {
-  animation: floatAnimation 4s infinite ease-in-out;
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
+  animation: applePulseGlow 3s ease-in-out infinite;
 }
