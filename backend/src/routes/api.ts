@@ -186,28 +186,36 @@ apiRouter.post('/events/ugc', (req: Request, res: Response) => {
 });
 
 // Scraper Ingestion Sweep Trigger (Medallion Pipeline Sweep)
-apiRouter.post('/scrapers/trigger', (req: Request, res: Response) => {
-  const result = PipelineOrchestrator.runSweep();
-  const allGoldEvents = EventsService.getEvents({});
-  res.json({
-    success: true,
-    newEventsFound: result.report.bronzeInserted,
-    skippedCdc: result.report.bronzeSkippedCdc,
-    silverValidated: result.report.silverValidated,
-    goldUpserted: result.report.goldUpserted,
-    dlqQuarantined: result.report.dlqQuarantined,
-    lakehouseStats: result.lakehouseStats,
-    events: allGoldEvents
-  });
+apiRouter.post('/scrapers/trigger', async (req: Request, res: Response) => {
+  try {
+    const result = await PipelineOrchestrator.runSweep();
+    const allGoldEvents = EventsService.getEvents({});
+    res.json({
+      success: true,
+      dedupReport: result.dedupReport,
+      reports: result.reports,
+      lakehouseStats: result.lakehouseStats,
+      events: allGoldEvents
+    });
+  } catch (err: any) {
+    console.error('Error during scraper sweep:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
-apiRouter.get('/scrapers/status', (req: Request, res: Response) => {
-  const sweep = PipelineOrchestrator.runSweep();
-  res.json({
-    success: true,
-    lakehouseStats: sweep.lakehouseStats,
-    lastAudit: sweep.report
-  });
+apiRouter.get('/scrapers/status', async (req: Request, res: Response) => {
+  try {
+    const sweep = await PipelineOrchestrator.runSweep();
+    res.json({
+      success: true,
+      lakehouseStats: sweep.lakehouseStats,
+      dedupReport: sweep.dedupReport,
+      reports: sweep.reports
+    });
+  } catch (err: any) {
+    console.error('Error during scraper status:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // ==========================================

@@ -11,11 +11,14 @@ class EventRadarMap {
     this.selectedCategory = 'All';
     this.selectedEventId = null;
 
-    // Priority Hub Centroids
+    // Priority Hub Centroids across India
     this.hubCoordinates = {
-      All: { lat: 12.3500, lng: 78.6000, zoom: 7 },
+      All: { lat: 18.0000, lng: 79.0000, zoom: 5 },
       Bengaluru: { lat: 12.9716, lng: 77.5946, zoom: 12 },
+      Mumbai: { lat: 18.9400, lng: 72.8350, zoom: 12 },
+      'Delhi-NCR': { lat: 28.6139, lng: 77.2090, zoom: 11 },
       Chennai: { lat: 13.0450, lng: 80.2600, zoom: 12 },
+      Hyderabad: { lat: 17.3850, lng: 78.4867, zoom: 12 },
       Coimbatore: { lat: 11.0100, lng: 76.9650, zoom: 12 }
     };
   }

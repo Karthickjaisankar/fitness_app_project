@@ -146,10 +146,13 @@
           <div class="map-floating-bar">
             <!-- Quick Hub Fly-To Buttons -->
             <div class="map-hub-pills">
-              <button class="map-hub-btn active" data-hub="All">🌐 All Hubs</button>
-              <button class="map-hub-btn" data-hub="Bengaluru">📍 Bengaluru (35)</button>
-              <button class="map-hub-btn" data-hub="Chennai">📍 Chennai (8)</button>
-              <button class="map-hub-btn" data-hub="Coimbatore">📍 Coimbatore (5)</button>
+              <button class="map-hub-btn active" data-hub="All">🌐 All Hubs (193)</button>
+              <button class="map-hub-btn" data-hub="Bengaluru">📍 Bengaluru (71)</button>
+              <button class="map-hub-btn" data-hub="Mumbai">📍 Mumbai (40)</button>
+              <button class="map-hub-btn" data-hub="Delhi-NCR">📍 Delhi-NCR (26)</button>
+              <button class="map-hub-btn" data-hub="Chennai">📍 Chennai (13)</button>
+              <button class="map-hub-btn" data-hub="Hyderabad">📍 Hyderabad (10)</button>
+              <button class="map-hub-btn" data-hub="Coimbatore">📍 Coimbatore (6)</button>
             </div>
             
             <!-- Basemap Layer Switcher (Zero Watermark) -->
@@ -229,17 +232,20 @@
         <!-- City Dropdown -->
         <div style="min-width: 200px;">
           <select id="city-filter-select" style="width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-active); color: #fff; padding: 11px 16px; border-radius: var(--radius-md); font-family: inherit; font-weight: 600; outline: none; cursor: pointer;">
-            <option value="All">All Priority Hubs</option>
-            <option value="Bengaluru" selected>📍 Bengaluru Hub</option>
-            <option value="Chennai">📍 Chennai Hub</option>
-            <option value="Coimbatore">📍 Coimbatore Hub</option>
+            <option value="All" selected>All Priority Hubs (193 Events)</option>
+            <option value="Bengaluru">📍 Bengaluru Hub (71)</option>
+            <option value="Mumbai">📍 Mumbai Hub (40)</option>
+            <option value="Delhi-NCR">📍 Delhi-NCR Hub (26)</option>
+            <option value="Chennai">📍 Chennai Hub (13)</option>
+            <option value="Hyderabad">📍 Hyderabad Hub (10)</option>
+            <option value="Coimbatore">📍 Coimbatore Hub (6)</option>
           </select>
         </div>
 
         <!-- Scraper Trigger Action -->
-        <button class="btn btn-secondary" id="trigger-scraper-btn" title="Trigger autonomous Townscript & Eventbrite scraper sweep">
+        <button class="btn btn-secondary" id="trigger-scraper-btn" title="Trigger autonomous multi-source scraper sweep">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
-          Run Hub Sweep
+          Run Multi-Agent Sweep
         </button>
       </div>
 
@@ -248,10 +254,13 @@
         <!-- Hub Selector Pills -->
         <div class="filter-pills" id="city-pills-row">
           <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); align-self: center; margin-right: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Priority Hubs:</span>
-          <button class="filter-pill city-filter-pill active" data-city="All">All Hubs (48 Events)</button>
-          <button class="filter-pill city-filter-pill" data-city="Bengaluru">Bengaluru (35)</button>
-          <button class="filter-pill city-filter-pill" data-city="Chennai">Chennai (8)</button>
-          <button class="filter-pill city-filter-pill" data-city="Coimbatore">Coimbatore (5)</button>
+          <button class="filter-pill city-filter-pill active" data-city="All">All Hubs (193)</button>
+          <button class="filter-pill city-filter-pill" data-city="Bengaluru">Bengaluru (71)</button>
+          <button class="filter-pill city-filter-pill" data-city="Mumbai">Mumbai (40)</button>
+          <button class="filter-pill city-filter-pill" data-city="Delhi-NCR">Delhi-NCR (26)</button>
+          <button class="filter-pill city-filter-pill" data-city="Chennai">Chennai (13)</button>
+          <button class="filter-pill city-filter-pill" data-city="Hyderabad">Hyderabad (10)</button>
+          <button class="filter-pill city-filter-pill" data-city="Coimbatore">Coimbatore (6)</button>
         </div>
 
         <!-- Distance Filter Pills -->

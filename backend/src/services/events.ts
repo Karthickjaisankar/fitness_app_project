@@ -142,7 +142,8 @@ export class EventsService {
    * Get event details by ID or Slug
    */
   public static getEventById(idOrSlug: string): FitnessEvent | undefined {
-    return store.events.find((e) => e.id === idOrSlug || e.slug === idOrSlug);
+    const allEvents = this.loadGoldEvents();
+    return allEvents.find((e) => e.id === idOrSlug || e.slug === idOrSlug);
   }
 
   /**
@@ -200,7 +201,7 @@ export class EventsService {
     finalPriceInr?: number;
     pointsRedeemed?: number;
   } {
-    const event = store.events.find((e) => e.id === eventId);
+    const event = this.getEventById(eventId);
     if (!event) {
       return { success: false, message: 'Event not found' };
     }

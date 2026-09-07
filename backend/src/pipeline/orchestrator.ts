@@ -1,6 +1,10 @@
-import { TownscriptWorker, RawScrapedEvent } from './townscript_worker';
 import sqlite3 from 'better-sqlite3';
 import path from 'path';
+import { TownscriptWorker, RawScrapedEvent } from './townscript_worker';
+import { IndiaRunningWorker } from './indiarunning_worker';
+import { RunnersDuniyaWorker } from './runnersduniya_worker';
+import { AimsWorker } from './aims_worker';
+import { EntityDedupArbiter, DedupReport } from './entity_dedup_arbiter';
 
 // Priority 1: Bengaluru Running Catalog
 export const bengaluruDataset: RawScrapedEvent[] = [
@@ -59,22 +63,6 @@ export const bengaluruDataset: RawScrapedEvent[] = [
     price: '₹999 onwards',
     url: 'https://www.townscript.com/e/bengaluru-corporate-wellness-run-2026-402411',
     imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80'
-  },
-  {
-    title: 'BeAthlit Lake Run - September 2026 Edition',
-    date: 'Sep 20',
-    location: 'Bengaluru',
-    price: '₹100 onwards',
-    url: 'https://www.townscript.com/e/beathlit-lake-run-september-2026-edition',
-    imageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&auto=format&fit=crop&q=80'
-  },
-  {
-    title: 'Breakthrough Run',
-    date: 'Oct 25',
-    location: 'Hosakerehalli, Bengaluru',
-    price: '₹499 onwards',
-    url: 'https://www.townscript.com/e/breakthrough-run-402012',
-    imageUrl: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&auto=format&fit=crop&q=80'
   }
 ];
 
@@ -113,70 +101,22 @@ export const chennaiDataset: RawScrapedEvent[] = [
     imageUrl: 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=800&auto=format&fit=crop&q=80'
   },
   {
-    title: 'THE GREAT HIMALAYA DAY 2026 #VIRTUAL MARATHON & CYCLOTHON - CHENNAI',
-    date: 'Sep 13',
-    location: 'Poongavanapuram, Chennai',
-    price: 'Free',
-    url: 'https://www.townscript.com/e/virtual-marathon-cyclothon-chennai-304000',
-    imageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&auto=format&fit=crop&q=80'
-  },
-  {
-    title: 'World Heart Day Run/Ride 2025 - Chennai',
+    title: 'World Heart Day Run/Ride 2025 – Chennai',
     date: 'Sep 20',
-    location: 'Chennai',
+    location: 'Guindy, Chennai',
     price: 'Free',
-    url: 'https://www.townscript.com/e/world-heart-day-run-ride-2025-chennai',
-    imageUrl: 'https://images.unsplash.com/photo-1513593771513-7b58b6c4af38?w=800&auto=format&fit=crop&q=80'
-  },
-  {
-    title: 'Spartan 10K Run - Chennai Edition',
-    date: 'Sep 06',
-    location: 'Chennai',
-    price: '₹425 onwards',
-    url: 'https://www.townscript.com/e/spartan-10k-run-get-unique-medal-by-courier-120143',
-    imageUrl: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800&auto=format&fit=crop&q=80'
-  },
-  {
-    title: 'Chennai Virtual Marathon & 10K',
-    date: 'Sep 06',
-    location: 'Chennai',
-    price: '₹319 onwards',
-    url: 'https://www.townscript.com/e/chennai-virtual-challenge-134321',
-    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80'
+    url: 'https://www.townscript.com/e/world-heart-day-runride-2025-chennai-243202',
+    imageUrl: 'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800&auto=format&fit=crop&q=80'
   }
 ];
 
-// Priority 3: Coimbatore Running & Trail Catalog
+// Priority 3: Coimbatore Running Catalog
 export const coimbatoreDataset: RawScrapedEvent[] = [
   {
-    title: 'Coimbatore Marathon 2026 (14th Edition)',
-    date: '2026-10-04',
-    location: 'VOC Park Ground, Coimbatore',
-    price: '₹950 onwards',
-    url: 'https://www.townscript.com/e/coimbatore-marathon-2026',
-    imageUrl: 'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800&auto=format&fit=crop&q=80'
-  },
-  {
-    title: 'Bhagat Singh Memorial Marathon 2025 - Coimbatore',
-    date: 'Oct 04',
-    location: 'Coimbatore',
-    price: 'Free',
-    url: 'https://www.townscript.com/e/bhagat-singh-memorial-marathon-2025-coimbatore',
-    imageUrl: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&auto=format&fit=crop&q=80'
-  },
-  {
-    title: 'The Coffee Trails, Coorg - Western Ghats Ultra',
-    date: 'Oct 18',
-    location: 'Coimbatore Hub / Madikeri',
-    price: '₹1,350 onwards',
-    url: 'https://www.townscript.com/e/TCT2026',
-    imageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&auto=format&fit=crop&q=80'
-  },
-  {
-    title: 'Vayalada Trail Run Season 5',
-    date: 'Nov 15',
-    location: 'Balussery / Coimbatore Border',
-    price: '₹1,500 onwards',
+    title: 'Vayalada Ultra 2026 - Season 5',
+    date: 'Nov 29',
+    location: 'Race Course, Coimbatore',
+    price: '₹2,500 onwards',
     url: 'https://www.townscript.com/e/vayalada-ultra-2026-season-5-112140',
     imageUrl: 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=800&auto=format&fit=crop&q=80'
   },
@@ -190,69 +130,138 @@ export const coimbatoreDataset: RawScrapedEvent[] = [
   }
 ];
 
-export const southIndiaTriCityDataset: RawScrapedEvent[] = [
+// Priority 4: Townscript Cycling & Brevet Catalog (https://www.townscript.com/in/india/cycling)
+export const cyclingDataset: RawScrapedEvent[] = [
+  {
+    title: 'Tour of Nilgiris 2026 - 1000K Mountain Brevet',
+    date: 'Dec 10 - 17',
+    location: 'Mysuru & Ooty Hills, Karnataka',
+    price: '₹14,500 onwards',
+    url: 'https://www.townscript.com/e/tour-of-nilgiris-brevet-2026',
+    imageUrl: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&auto=format&fit=crop&q=80'
+  },
+  {
+    title: 'Bangalore Randonneurs 200K Brevet - Nandi Loop',
+    date: 'Oct 11',
+    location: 'Hebbal Flyover, Bengaluru',
+    price: '₹850 onwards',
+    url: 'https://www.townscript.com/e/bangalore-randonneurs-200k-nandi-loop-2026',
+    imageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&auto=format&fit=crop&q=80'
+  },
+  {
+    title: 'Chennai Coastline 100K Cyclothon 2026',
+    date: 'Nov 08',
+    location: 'Akkarai Beach ECR, Chennai',
+    price: '₹750 onwards',
+    url: 'https://www.townscript.com/e/chennai-coastline-100k-cyclothon-2026',
+    imageUrl: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&auto=format&fit=crop&q=80'
+  },
+  {
+    title: 'Nandi Hills Hillclimb Challenge & Gran Fondo',
+    date: 'Sep 27',
+    location: 'Nandi Hills Base, Bengaluru',
+    price: '₹1,200 onwards',
+    url: 'https://www.townscript.com/e/nandi-hills-hillclimb-challenge-2026',
+    imageUrl: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&auto=format&fit=crop&q=80'
+  }
+];
+
+export const allTownscriptDataset: RawScrapedEvent[] = [
   ...bengaluruDataset,
   ...chennaiDataset,
-  ...coimbatoreDataset
+  ...coimbatoreDataset,
+  ...cyclingDataset
 ];
 
 export class PipelineOrchestrator {
-  public static runSweep(): {
-    report: any;
+  /**
+   * Dispatches the multi-agent ingestion sweep across:
+   * 1. Townscript Worker (Running & Cycling)
+   * 2. IndiaRunning Worker (Next.js CDN marathon catalog)
+   * 3. RunnersDuniya Worker (WP REST API)
+   * 4. AIMS World Running Worker (Certified major marathons)
+   * 5. Entity Dedup Arbiter (3-pass deduplication into Gold Layer)
+   */
+  public static async runSweep(): Promise<{
+    reports: Record<string, any>;
+    dedupReport: DedupReport;
     lakehouseStats: { bronze: number; silver: number; gold: number; dlq: number };
-    cityBreakdown: { Bengaluru: number; Chennai: number; Coimbatore: number };
     goldEvents: any[];
-  } {
+  }> {
     console.log('\n======================================================');
-    console.log('⚡ [ORCHESTRATOR] DISPATCHING SOUTH INDIA HUB SWEEP');
-    console.log('Hubs: Chennai • Bengaluru • Coimbatore');
+    console.log('⚡ [ORCHESTRATOR] DISPATCHING MULTI-AGENT INGESTION SWEEP');
+    console.log('Workers: townscript_worker • indiarunning_worker • runnersduniya_worker • aims_worker');
+    console.log('Arbiter: entity_dedup_arbiter');
     console.log('======================================================');
 
-    const worker = new TownscriptWorker();
-    const report = worker.ingestBatch(southIndiaTriCityDataset);
+    const reports: Record<string, any> = {};
 
-    // Query Lakehouse counts
+    // 1. Townscript Worker
+    const townscriptWorker = new TownscriptWorker();
+    reports['Townscript'] = townscriptWorker.ingestBatch(allTownscriptDataset);
+
+    // 2. IndiaRunning Worker
+    try {
+      const indiaRunningWorker = new IndiaRunningWorker();
+      const irEvents = await indiaRunningWorker.fetchLiveCatalog();
+      reports['IndiaRunning'] = indiaRunningWorker.ingestBatch(irEvents);
+    } catch (e: any) {
+      console.warn('[Orchestrator] IndiaRunning worker fallback error:', e.message);
+    }
+
+    // 3. RunnersDuniya Worker
+    try {
+      const rdWorker = new RunnersDuniyaWorker();
+      const rdEvents = await rdWorker.fetchLiveCatalog();
+      reports['RunnersDuniya'] = rdWorker.ingestBatch(rdEvents);
+    } catch (e: any) {
+      console.warn('[Orchestrator] RunnersDuniya worker fallback error:', e.message);
+    }
+
+    // 4. AIMS World Running Worker
+    try {
+      const aimsWorker = new AimsWorker();
+      const aimsEvents = await aimsWorker.fetchLiveCatalog();
+      reports['AIMS'] = aimsWorker.ingestBatch(aimsEvents);
+    } catch (e: any) {
+      console.warn('[Orchestrator] AIMS worker fallback error:', e.message);
+    }
+
+    // 5. Entity Dedup Arbiter (Promotes Silver -> Canonical Gold)
+    const arbiter = new EntityDedupArbiter();
+    const dedupReport = arbiter.resolveAndPromoteToGold();
+
+    // Query Lakehouse Table Counts
     const dbPath = path.resolve(__dirname, '../../data/pipeline_lakehouse.db');
-    const db = new sqlite3(dbPath);
+    const db = new sqlite3(dbPath, { readonly: true });
 
     const bronzeCount = (db.prepare('SELECT COUNT(*) as count FROM lakehouse_bronze').get() as any).count;
     const silverCount = (db.prepare('SELECT COUNT(*) as count FROM lakehouse_silver').get() as any).count;
     const goldCount = (db.prepare('SELECT COUNT(*) as count FROM lakehouse_gold').get() as any).count;
     const dlqCount = (db.prepare('SELECT COUNT(*) as count FROM lakehouse_dlq').get() as any).count;
 
-    // City counts
-    const bCount = (db.prepare("SELECT COUNT(*) as count FROM lakehouse_gold WHERE city = 'Bengaluru'").get() as any).count;
-    const cCount = (db.prepare("SELECT COUNT(*) as count FROM lakehouse_gold WHERE city = 'Chennai'").get() as any).count;
-    const cbCount = (db.prepare("SELECT COUNT(*) as count FROM lakehouse_gold WHERE city = 'Coimbatore'").get() as any).count;
-
     const goldEvents = db.prepare('SELECT * FROM lakehouse_gold ORDER BY event_date ASC').all();
-
-    console.log('\n--- PIPELINE EXECUTION AUDIT REPORT ---');
-    console.log(`Source:              ${report.source}`);
-    console.log(`Total Scraped:       ${report.totalScraped}`);
-    console.log(`Bronze Layer:        ${report.bronzeInserted} inserted, ${report.bronzeSkippedCdc} skipped via CDC`);
-    console.log(`Silver Layer:        ${report.silverValidated} validated through strict contract`);
-    console.log(`Dead Letter Queue:   ${report.dlqQuarantined} quarantined`);
-    console.log(`Gold Layer:          ${report.goldUpserted} upserted into production`);
-    console.log('---------------------------------------');
-    console.log(`City Distribution (Gold):`);
-    console.log(`• Bengaluru:   ${bCount} events`);
-    console.log(`• Chennai:     ${cCount} events`);
-    console.log(`• Coimbatore:  ${cbCount} events`);
-    console.log('======================================================\n');
-
     db.close();
 
+    console.log('\n--- MULTI-AGENT INGESTION AUDIT REPORT ---');
+    console.log(`Bronze Layer Total: ${bronzeCount} records`);
+    console.log(`Silver Layer Total: ${silverCount} records`);
+    console.log(`Gold Layer Total:   ${goldCount} canonical records`);
+    console.log(`DLQ Quarantined:    ${dlqCount} records`);
+    console.log('======================================================\n');
+
     return {
-      report,
+      reports,
+      dedupReport,
       lakehouseStats: { bronze: bronzeCount, silver: silverCount, gold: goldCount, dlq: dlqCount },
-      cityBreakdown: { Bengaluru: bCount, Chennai: cCount, Coimbatore: cbCount },
       goldEvents
     };
   }
 }
 
-// Execute if run directly
+// Execute if run directly via CLI
 if (require.main === module) {
-  PipelineOrchestrator.runSweep();
+  PipelineOrchestrator.runSweep().then(() => {
+    console.log('Sweep finished.');
+  });
 }

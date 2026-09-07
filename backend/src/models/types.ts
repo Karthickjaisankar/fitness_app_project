@@ -65,6 +65,13 @@ export interface DistanceCategory {
   priceInr: number;
 }
 
+export interface BookingLink {
+  provider: string; // 'Townscript' | 'IndiaRunning' | 'RunnersDuniya' | 'AIMS'
+  url: string;
+  priceInr?: number;
+  isOfficial?: boolean;
+}
+
 export interface FitnessEvent {
   id: string;
   title: string;
@@ -79,7 +86,8 @@ export interface FitnessEvent {
   tags: string[];
   priceFromInr: number;
   registrationUrl: string;
-  source: 'Townscript' | 'Eventbrite' | 'ChapterUGC';
+  bookingLinks?: BookingLink[];
+  source: 'Townscript' | 'IndiaRunning' | 'RunnersDuniya' | 'AIMS' | 'Eventbrite' | 'ChapterUGC' | string;
   verified: boolean;
   bannerUrl: string;
   coordinates?: { lat: number; lng: number };
